@@ -1,1 +1,1 @@
-web: npm run heroku-serve
+web: node server.js
