@@ -68,7 +68,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.post('/upload', cors(), (req, res) => {
-  fs.writeFile(`${ PATH }/code/${list.languages[req.body.languageIndex].name.replace('#', '_sharp')}/${req.body.name}.${req.body.ext}`, req.body.code, () => { console.log(`wrote ${req.body.name}.${req.body.ext}`); });
+  fs.writeFile(`${PATH}/code/${list.languages[req.body.languageIndex].name.replace('#', '_sharp')}/${req.body.name}.${req.body.ext}`, req.body.code, () => { console.log(`wrote ${req.body.name}.${req.body.ext}`); });
 
   if (!list[req.body.languageIndex].verify) {
     list[req.body.languageIndex].verify = [];
@@ -212,7 +212,7 @@ io.on('connection', (socket) => {
   });
 });
 
-const { PORT } = process.env;
+const PORT = process.env.PORT || 3000;
 
 http.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}!`);
