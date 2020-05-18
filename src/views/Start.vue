@@ -99,8 +99,12 @@ export default {
       if (this.room.owner) {
         this.$socket.client.emit('start', Date.now());
       }
-
-      this.$router.push(window.location.hash ? 'myuniverse' : 'run');
+      if (window.location.hash || localStorage.getItem('myUniverse')) {
+        localStorage.setItem('myUniverse', true);
+        this.$router.push('myuniverse');
+      } else {
+        this.$router.push('run');
+      }
     },
     ready(value) {
       this.$socket.client.emit('playerStateChange', value);
