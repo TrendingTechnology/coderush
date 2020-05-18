@@ -1,8 +1,8 @@
 <template>
   <main @input.capture="updateOption">
-    <h2>Jak chcesz grać?</h2>
+    <h2>How do you want to play?</h2>
     <p class="select-text">
-      Tryb gry
+      Game mode
     </p>
     <div ref="modesList" class="modes list">
       <label
@@ -25,7 +25,7 @@
       </label>
     </div>
     <p class="select-text">
-      Motyw
+      Source code theme
     </p>
     <div ref="themesList" class="themes list">
       <label
@@ -44,12 +44,12 @@
     </div>
     <div class="toggles">
       <label>
-        <span>Podkreśl następny znak</span>
+        <span>Highlight next character</span>
         <input v-model="underScore" type="checkbox">
         <div class="slider" />
       </label>
       <label>
-        <span>Automatyczne wcięcie nowej lini</span>
+        <span>Auto-indent new line</span>
         <input
           v-model="autoIndent"
           :disabled="block"
@@ -59,7 +59,7 @@
         <div class="slider" />
       </label>
       <label>
-        <span>Tylko krótkie</span>
+        <span>Only short levels</span>
         <input
           v-model="codeLength"
           :disabled="block"
@@ -69,7 +69,7 @@
         <div class="slider" />
       </label>
       <label>
-        <span>Numeruj linie</span>
+        <span>Number the lines</span>
         <input v-model="lineNumbers" type="checkbox">
         <div class="slider" />
       </label>
@@ -93,12 +93,12 @@ export default {
         ['material-darker', 'Material Dark'],
         ['one-dark', 'Atom One Dark'],
         ['Base2Tone-Suburb-dark', 'Base2Tone Suburb Dark'],
-        ['', 'Bez motywu'],
+        ['', 'Plain white'],
       ],
       modesList: [
-        ['Normalny', 'Just normal'],
-        ['Bez poprawiania', '(coming soon)'],
-        ['100 sekund', '(coming not that soon)'],
+        ['Normal', 'Write down provided source code as quickly as you can.'],
+        ['Hardcore', 'Just don\'t make any mistakes. (coming soon)'],
+        ['CodeRush (100 seconds)', 'See how much code you are able to write in 100 seconds (coming not that soon)'],
       ],
     };
   },
@@ -173,6 +173,7 @@ $purple-gradient-colors: $purple, mix($light-purple, $grid-color, 80)
 
     .container
       margin-top: 2em
+      width: 12vw
       display: flex
       flex-direction: column
       align-items: center
@@ -181,11 +182,14 @@ $purple-gradient-colors: $purple, mix($light-purple, $grid-color, 80)
     span
       margin: 2em 0.5em
 
+
     .modeDesc
+      margin: 0
       color: #bbb
       font-size: 0.9em
-      width: 60%
+      width: 80%
       text-align: center
+      display: block
 
 
   .selected

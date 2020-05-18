@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>Kontrybuuj</h1>
+    <h1>Contribute to CodeRush library</h1>
     <UploadCode />
   </div>
 </template>

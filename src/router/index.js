@@ -3,6 +3,7 @@ import VueRouter from 'vue-router';
 import Start from '../views/Start.vue';
 import About from '../views/About.vue';
 import Run from '../views/Run.vue';
+import MyUniverse from '../views/MyUniverse.vue';
 import Contribute from '../views/Contribute.vue';
 
 Vue.use(VueRouter);
@@ -23,6 +24,11 @@ const routes = [
     name: 'Run',
     component: Run,
     alias: '/results',
+  },
+  {
+    path: '/myuniverse',
+    name: 'MyUniverse',
+    component: MyUniverse,
   },
   {
     path: '/contribute',

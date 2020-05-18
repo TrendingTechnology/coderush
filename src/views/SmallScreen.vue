@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div>
-      <h2>Ta strona jest mobile-friendly...<br><br>...Ale ty nie masz szans na takim ekranie</h2>
+      <h2>We detected unsupported screen resolution.<br><br>Please open this app on bigger screen (1920x1080)</h2>
     </div>
   </div>
 </template>

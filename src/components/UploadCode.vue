@@ -1,17 +1,17 @@
 <template>
   <div class="wrapper">
     <p v-if="!language.index">
-      Wybierz język
+      Choose language
     </p>
     <p v-else-if="!editorReady">
-      Ładowanie edytora...
+      Loading code editor...
     </p>
     <div class="settings">
       <div v-if="$route.path === '/contribute'" class="">
-        <label>Nazwa</label>
+        <label>Code functionality (or product name)</label>
         <input v-model="name" type="text">
       </div>
-      <label>Rozmiar Tab'a: {{ tabWidth }}
+      <label>Tab size: {{ tabWidth }}
         <input v-model="tabSize" type="checkbox">
       </label>
     </div>
@@ -26,7 +26,7 @@
 
     <div class="buttons">
       <button v-if="$route.path === '/contribute'" @click="sendCustomCode">
-        Wyślij
+        Send
       </button>
     </div>
   </div>
@@ -131,7 +131,7 @@ export default {
           });
       } else {
         console.log('CUSTOM CODE TOO SHORT');
-        this.confirmMsg = 'Co taki krótki?';
+        this.confirmMsg = 'Code needs to be a little bit longer.';
       }
     },
   },

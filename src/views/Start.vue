@@ -16,7 +16,7 @@
           >
         </label>
         <label v-if="room.connected" class="button ready">
-          <span>Gotowy</span>
+          <span>Ready</span>
           <input
             v-model="isReady"
             type="checkbox"
@@ -54,7 +54,7 @@ export default {
   data() {
     return {
       showEditor: false,
-      uploadCodeText: 'Wrzuć swój kod',
+      uploadCodeText: 'Use your own code',
       error: '',
       isReady: false,
     };
@@ -78,7 +78,7 @@ export default {
       if (this.room.owner) {
         this.$socket.client.emit('useCustomCode', value);
       }
-      this.uploadCodeText = value ? 'Wróć' : 'Wrzuć swój kod';
+      this.uploadCodeText = value ? 'Close editor' : 'Use your own code';
       this.showEditor = value;
     },
     run() {
@@ -88,7 +88,7 @@ export default {
       }
       if (this.showEditor) {
         if (this.customCode.text.length < 30 || this.customCode.lines < 4) {
-          this.error = 'Wymyśl coś dłuższego';
+          this.error = 'Try something a little bit longer';
           return;
         }
         if (this.room.owner) {
@@ -100,7 +100,7 @@ export default {
         this.$socket.client.emit('start', Date.now());
       }
 
-      this.$router.push('run');
+      this.$router.push(window.location.hash ? 'myuniverse' : 'run');
     },
     ready(value) {
       this.$socket.client.emit('playerStateChange', value);

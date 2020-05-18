@@ -1,22 +1,22 @@
 <template>
   <div>
     <h1>{{ format(WPM, 0, 1) }} WPM = {{ format(CPM, 0, 1) }} CPM</h1>
-    <h2>{{ stats.codeLength }} poprawnych w {{ format(stats.timeFromFirstInput, 1) }} s</h2>
-    <h3>Prędkość początkowa: {{ format(oneThirdWPM, 0, 1) }} WPM</h3>
-    <h3>Prędkość końcowa: {{ format(lastThirdWPM, 0, 1) }} WPM</h3>
-    <h4>Czas reakcji po starcie (nie wliczany): {{ format(longestTimeOfCorrection, 0, 1) }} ms</h4>
-    <h4>Odstępy między kliknięciami: {{ format(keyPressAvgInterval, 0, 1) }} ms</h4>
+    <h2>{{ stats.codeLength }} correct in {{ format(stats.timeFromFirstInput, 1) }} sec</h2>
+    <h3>Starting speed: {{ format(oneThirdWPM, 0, 1) }} WPM</h3>
+    <h3>Final speed: {{ format(lastThirdWPM, 0, 1) }} WPM</h3>
+    <h4>Start reaction time (excluded from results): {{ format(longestTimeOfCorrection, 0, 1) }} ms</h4>
+    <h4>Input intervals: {{ format(keyPressAvgInterval, 0, 1) }} ms</h4>
     <div v-if="mistakes.length" class="mistakes">
-      <h2>Wszystkich błędów: {{ mistakes.length }} / {{ stats.history.length - 1 }} ({{ format(mistakesToClicksRatio, 1, 100) }} %)</h2>
+      <h2>Total errors: {{ mistakes.length }} / {{ stats.history.length - 1 }} ({{ format(mistakesToClicksRatio, 1, 100) }} %)</h2>
       <ul>
-        <li>Czas stracony przez błedy: {{ format(totalTimeLost) }} s</li>
-        <li>Prędkość odliczając ten czas: {{ format(WPMWithoutTimeLost, 0, 1) }} WPM</li>
-        <li>Najwięcej błędów pod rząd: {{ mostMistakesInARow }} znaków</li>
-        <li>Najdłuższy czas poprawki: {{ format(longestTimeOfCorrection) }} s</li>
+        <li>Time wasted by mistakes: {{ format(totalTimeLost) }} s</li>
+        <li>The speed of counting down that time {{ format(WPMWithoutTimeLost, 0, 1) }} WPM</li>
+        <li>Most mistakes in a row: {{ mostMistakesInARow }} znaków</li>
+        <li>Longest correction time: {{ format(longestTimeOfCorrection) }} s</li>
       </ul>
     </div>
     <h2 v-else>
-      Nie popełniłeś żadnych błędów.
+      You haven't made any mistakes!
     </h2>
   </div>
 </template>

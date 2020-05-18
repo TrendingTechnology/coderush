@@ -15,13 +15,13 @@
       <router-link v-if="this.$route.path !== '/about'" to="/about">
         <fa :icon="['fas', 'info']" />
         <span class="btn-text">
-          O co tu chodzi?
+          About
         </span>
       </router-link>
       <router-link v-if="this.$route.path !== '/contribute'" to="/contribute">
         <fa :icon="['fas', 'file-code']" />
         <span class="btn-text">
-          Wyślij swój kod
+          Contribute
         </span>
       </router-link>
     </div>
@@ -33,44 +33,44 @@
             v-model="roomName"
             min-length="3"
             type="text"
-            placeholder="Nazwa"
+            placeholder="Room name"
           >
         </div>
 
         <button :disabled="roomName === ''" @click="checkRoom('create')">
           <span class="btn-text">
-            Utwórz pokój (beta)
+            Create room (Beta)
           </span>
         </button>
 
         <button :disabled="roomName === ''" @click="checkRoom('join')">
           <span class="btn-text">
-            Dołącz
+            Join room
           </span>
         </button>
 
         <div v-if="askForPlayerName" class="playerName">
           <input v-model="playerName" type="text" placeholder="Nick">          <button v-if="action === 'create'" :disabled="!playerName" @click="createRoom">
             <span class="btn-text">
-              Utwórz
+              Create
             </span>
           </button>
           <button v-else :disabled="playerName === ''" @click="checkPlayerName">
             <span class="btn-text">
-              Dołącz
+              Join
             </span>
           </button>
           <div v-if="room.owner" class="popUp">
             <p>
-              Jesteś właścicielem pokoju {{ roomName }}.
-              Aby inni mogli dołączyć, udostępnij im ten link:
+              You have succesfully created {{ roomName }} room.
+              For others to join, send them that link:
             </p>
             <fa :icon="['fas', 'copy']" />
             <input type="text" disabled :value="`${origin}/join/${roomName}`">
           </div>
           <button @click="askForPlayerName = false">
             <span class="btn-text">
-              Zamknij
+              Close
             </span>
           </button>
         </div>
@@ -80,7 +80,7 @@
         <button @click="disconnect">
           <fa :icon="['fas', 'sign-out-alt']" />
           <span class="btn-text">
-            Rozłącz
+            Disconnect
           </span>
         </button>
         <PlayersList v-if="room.connected && $route.path !== '/run'" />
@@ -255,6 +255,8 @@ nav:after
     margin-left: 1em
 
 svg
+  display: inline-block
+  width: 1em !important
   transition: transform $nav-trans-dur $nav-trans-timing 0s
 
 .room

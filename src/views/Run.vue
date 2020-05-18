@@ -1,13 +1,13 @@
 <template>
   <div class="run">
     <div v-if="requestReset" class="requestReset">
-      <h2>Właściciel pokoju chce zacząć nową grę</h2>
-      <p>Zostaniesz przeniesiony do poczekalni</p>
+      <h2>Room owner wants to start a new game</h2>
+      <p>You will be moved to lobby</p>
       <button @click="$router.push('/')">
         OK
       </button>
       <button @click="disconnect">
-        Opuść pokój
+        Leave room
       </button>
     </div>
     <div class="info">
@@ -56,11 +56,11 @@ export default {
     ...mapGetters(['language', 'customCode', 'codeInfo', 'room']),
     codeSource() {
       if (this.codeInfo.name) {
-        return this.codeInfo.source === 'own' ? 'Kod własny' : this.codeInfo.source;
+        return this.codeInfo.source === 'own' ? 'Łukasz Wielgus archive' : this.codeInfo.source;
       } if (this.room.connected && !this.room.owner) {
-        return 'Kod właściciela pokoju';
+        return 'Code provided by room owner';
       }
-      return 'Twój kod';
+      return 'Code provided by You';
     },
     languageName() {
       return this.language.name.replace('_', ' ');

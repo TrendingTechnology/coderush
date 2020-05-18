@@ -4,10 +4,10 @@
       <h2> {{ countdownText }} </h2>
     </div>
     <button class="reset" :disabled="room.connected" @click="$emit('reset')">
-      Resetuj
+      Reset
     </button>
     <button :disabled="room.connected" @click="completed()">
-      Zakończ teraz
+      Finish now
     </button>
     <div class="code" :class="{ready: editorsReady, completed: isCompleted, heatMap: heatMapReady}">
       <codemirror
@@ -340,10 +340,10 @@ export default {
             this.countdown += 0.5;
             console.warn(Date.now() - initTime);
             if ((Date.now() - initTime) / 1000 < 5) {
-              this.countdownText = 'Chwileczkę...';
+              this.countdownText = 'Just a moment...';
             } else {
               console.warn('Long loading time');
-              this.countdownText = 'Trwa do dłużej niż zwykle';
+              this.countdownText = 'It probably crash but You can wait a few seconds just in case';
             }
           }
         } else if (this.countdown === 0) {
@@ -371,9 +371,9 @@ export default {
           clearInterval(interval);
           console.log(err);
           if (err.message === 'No internet') {
-            this.countdownText = 'Brak połączenia z serwerem.';
+            this.countdownText = 'Connection with server not available.';
           } else {
-            this.countdownText = 'Spróbuj ponownie później';
+            this.countdownText = 'Please try again later';
           }
         });
     },

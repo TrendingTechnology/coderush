@@ -20,7 +20,7 @@ const actions = {
     if (msg.owner) {
       commit('SET_ROOM_PROPERTY', ['connected', false]);
       setTimeout(() => {
-        commit('SET_ROOM_PROPERTY', ['name', 'Pokój zamknięty']);
+        commit('SET_ROOM_PROPERTY', ['name', 'Room closed']);
       }, 20000);
     }
 

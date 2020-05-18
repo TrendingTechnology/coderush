@@ -1,11 +1,11 @@
 <template>
   <div>
-    <h3>{{ room.connected ? 'Połączono' : 'Odłączono' }} -- Pokój {{ room.name }}</h3>
-    <h4>Liczba graczy: {{ Object.keys(room.players).length === 1 ? 'Tylko ty' : Object.keys(room.players).length }}</h4>
+    <h3>{{ room.connected ? 'Connected' : 'Disconnected' }} -- Pokój {{ room.name }}</h3>
+    <h4>Players count: {{ Object.keys(room.players).length === 1 ? 'Only you' : Object.keys(room.players).length }}</h4>
     <ol>
       <li v-for="player in sortedPlayers" :key="player.name">
-        <span :class="{ owner: player.owner, me: player.name === room.myName && !room.owner, winner: player.name === room.winner }">{{ player.name }}{{ player.name === room.myName ? ' (ty)' : '' }} {{ player.ready && player.connected ? '✔' : '' }} {{ player.connected ? '🌐' : '❎' }}</span>
-        <span v-if="$route.path === '/results' && room.ready">{{ player.stats.wpm }} WPM {{ player.stats.mistaskesCount || 0 }} Błędów</span>
+        <span :class="{ owner: player.owner, me: player.name === room.myName && !room.owner, winner: player.name === room.winner }">{{ player.name }}{{ player.name === room.myName ? ' (You)' : '' }} {{ player.ready && player.connected ? '✔' : '' }} {{ player.connected ? '🌐' : '❎' }}</span>
+        <span v-if="$route.path === '/results' && room.ready">{{ player.stats.wpm }} WPM {{ player.stats.mistaskesCount || 0 }} Errors</span>
       </li>
     </ol>
   </div>

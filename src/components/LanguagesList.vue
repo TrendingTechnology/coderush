@@ -4,7 +4,7 @@
       <input
         v-model="searchText"
         type="text"
-        placeholder="Filtruj"
+        placeholder="Search"
         class="searchInput"
       >
     </div>
@@ -15,11 +15,11 @@
         :class="{'selected': language.index === null}"
         @click="selectRandom"
       >
-        Wylosuj
+        Random
       </button>
       <label
         v-for="(filteredLanguage, index) in filteredList"
-        :key="filteredLanguage.name === 'Ładowanie' ? index : filteredLanguage.name"
+        :key="filteredLanguage.name === 'Loading...' ? index : filteredLanguage.name"
         class="language"
         :class="{'selected':language.index === filteredLanguage.index}"
       >
@@ -68,7 +68,7 @@ export default {
           .sort((a, b) => (b.name.toLowerCase().startsWith(search) ? 1 : -1));
         return filtered.length > 0 ? filtered : this.languagesList;
       }
-      return [...Array(29)].map(() => ({ name: 'Ładowanie' }));
+      return [...Array(29)].map(() => ({ name: 'Loading...' }));
     },
   },
   activated() {
