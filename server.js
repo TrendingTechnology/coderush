@@ -4,12 +4,14 @@ const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const cors = require('cors');
 const fs = require('fs-extra');
+const path = require('path');
 
 const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 
-const PATH = `${__dirname}/master`;
+const PATH = path.join(__dirname, '/master');
+console.warn(PATH);
 
 fs.copySync('dist', 'master', { overwrite: true, filter: (path) => !path.includes('.json') && !path.includes('code') });
 
@@ -39,7 +41,6 @@ setInterval(() => {
     console.dir(list);
   }
 }, 1000 * 60);
-
 
 app.use(morgan('dev'));
 
@@ -83,7 +84,7 @@ app.post('/upload', cors(), (req, res) => {
 });
 
 
-app.use(fallback('index.html', { PATH }));
+app.use(fallback('index.html', { root: PATH }));
 
 const rooms = {};
 

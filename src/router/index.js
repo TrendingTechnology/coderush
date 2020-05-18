@@ -5,6 +5,7 @@ import About from '../views/About.vue';
 import Run from '../views/Run.vue';
 import MyUniverse from '../views/MyUniverse.vue';
 import Contribute from '../views/Contribute.vue';
+import PageNotFound from '../views/PageNotFound.vue';
 
 Vue.use(VueRouter);
 
@@ -38,6 +39,10 @@ const routes = [
   {
     path: '/join/:roomName',
     component: Start,
+  },
+  {
+    path: '*',
+    component: PageNotFound,
   },
 ];
 
