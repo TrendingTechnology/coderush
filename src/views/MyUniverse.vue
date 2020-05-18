@@ -8,6 +8,9 @@
         This was taken 2 years ago, every jump after that one wouldn't fit in the frame.
         The problem is that I'm usually doing it alone (what a suprise) or when I'm with someone, there is just no time for setting up the camera. So you must take my word for it.
       </p>
+      <p />
+      <p>I'm currently rebuiliding whole layout. If something is overflowing or not visible, try zooming out to 80% in your browser.</p>
+      <p />
     </main>
     <footer>
       <button @click="$router.push('run')">
