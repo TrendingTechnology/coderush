@@ -131,7 +131,7 @@ export default {
   display: flex
   justify-content: flex-end
   flex-basis: 0
-  max-height: calc(100vh - 2 * $gap)
+  max-height: calc(100vh - 2 * #{$gap})
 
 .middle
   position: relative

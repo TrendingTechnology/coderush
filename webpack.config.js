@@ -2,13 +2,21 @@ const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 module.exports = {
   module: {
-    rules: [
-      // ... other rules
+    loaders: [
       {
         test: /\.vue$/,
-        loader: 'vue-loader',
+        loader: 'vue',
+      },
+      {
+        test: /\.s[a|c]ss$/,
+        loader: 'style!css!sass',
       },
     ],
+  },
+  vue: {
+    loaders: {
+      scss: 'style!css!sass',
+    },
   },
   plugins: [
     // make sure to include the plugin!
