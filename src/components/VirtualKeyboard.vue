@@ -46,9 +46,9 @@ export default {
   },
   data() {
     return {
-      refActive: false,
       keyStats: {},
       stayOnLeave: {},
+      element: null,
       timeout: 0,
       keyboard: [
         [
@@ -154,15 +154,13 @@ export default {
       }, []);
     },
   },
-  created() {
-    document.addEventListener('mousemove', this.trackMouse);
-  },
   mounted() {
     this.keyStats = this.generatekeyStats();
     this.markWrongKeys();
+    this.$store.commit('ADD_TRACKED_CONTAINER', this.$refs.keyboard);
   },
   beforeDestroy() {
-    document.removeEventListener('mousemove', this.trackMouse);
+    this.$store.commit('REMOVE_TRACKED_CONTAINER', this.$refs.keyboard.className);
   },
   methods: {
     markWrongKeys() {
@@ -275,142 +273,126 @@ export default {
       });
       return keys;
     },
-    trackMouse(ev) {
-      if (!this.rafActive) {
-        this.rafActive = true;
-
-        requestAnimationFrame(() => {
-          this.rafActive = false;
-          const x = ev.pageX - this.$refs.keyboard.offsetLeft;
-          const y = ev.pageY - this.$refs.keyboard.offsetTop;
-          this.$refs.keyboard.style.setProperty('--mouse-x', `${x}px`);
-          this.$refs.keyboard.style.setProperty('--mouse-y', `${y}px`);
-        });
-      }
-    },
   },
 };
 </script>
-<style scoped>
-.keyboard {
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  font-size: 1rem;
-  --min-size: 4vw;
-  --key-margin: .1rem;
-  --key-size: calc(var(--min-size) + var(--key-margin) * 2);
-  --bg-color: #2c2137;
-  min-width: calc(15 * var(--key-size));
-  height: calc(5 * var(--key-size));
-  background: transparent radial-gradient(200px 100px at var(--mouse-x) var(--mouse-y), rgba(180, 180, 180, 0.5),transparent ) no-repeat 0 0;
-}
+<style lang="sass" scoped>
+.keyboard
+  margin: 0 auto
+  display: flex
+  flex-direction: column
+  justify-content: space-around
+  font-size: 1rem
+  --min-size: 4vw
+  --key-margin: .1rem
+  --key-size: calc(var(--min-size) + var(--key-margin) * 2)
+  --bg-color: #2c2137
+  min-width: calc(15 * var(--key-size))
+  height: calc(5 * var(--key-size))
+  background: transparent radial-gradient(200px 100px at var(--mouse-x) var(--mouse-y), rgba(180, 180, 180, 0.5),transparent ) no-repeat 0 0
 
-.row {
-  text-align: center;
-  position: relative;
-  width: 100%;
-  display: flex;
-  height: 0;
-  margin: var(--key-margin) 0;
-  flex-grow: 1;
-  align-items: center;
-}
 
-.key {
-  height: 100%;
-  cursor: pointer;
-  -webkit-user-select: none;
-  flex-shrink: 0;
-  flex-basis: 0;
-  margin: 0 var(--key-margin);
-  padding: 0.4rem;
-  background: var(--bg-color);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  border: 1px solid rgba(110, 110, 110, 0.3);
-  transition: background-color 0.3s cubic-bezier(0,.5,1,1), color 0.3s cubic-bezier(0,.5,1,1), transform .1s ease-out;
-}
+.row
+  text-align: center
+  position: relative
+  width: 100%
+  display: flex
+  height: 0
+  margin: var(--key-margin) 0
+  flex-grow: 1
+  align-items: center
 
-span {
-  pointer-events: none;
-}
 
-.key:hover {
-  opacity: .9;
-}
+.key
+  height: 100%
+  cursor: pointer
+  user-select: none
+  flex-shrink: 0
+  flex-basis: 0
+  margin: 0 var(--key-margin)
+  padding: 0.4rem
+  background: var(--bg-color)
+  display: flex
+  flex-direction: column
+  justify-content: space-around
+  border: 1px solid rgba(110, 110, 110, 0.3)
+  transition: background-color 0.3s cubic-bezier(0,.5,1,1), color 0.3s cubic-bezier(0,.5,1,1), transform .1s ease-out
 
-.key:active {
-  background: white;
-  color: rgba(43, 30, 51, 1) !important;
-  transform: scale(.96);
-}
 
-.square {
-  flex-grow: 1;
-}
-.tab {
-  flex-grow: 1.4;
-}
-.caps-lock {
-  flex-grow: 1.7;
-}
-.shift.left{
-  flex-grow: 2.1;
-}
-.row:last-child > .special:not(.space) {
-  flex-grow: 1.4;
-}
-.backspace {
-  flex-grow: 2;
-}
-.backslash {
-  flex-grow: 1.6;
-}
-.enter {
-  flex-grow: 2.3;
-}
-.shift.right {
-  flex-grow: 2.9;
-}
-.space {
-  flex-grow: 5.2;
-}
+span
+  pointer-events: none
 
-.secondary {
-  color: #bbb;
-}
 
-.left > span, .right > span {
+.key:hover
+  opacity: .9
+
+
+.key:active
+  background: white
+  color: rgba(43, 30, 51, 1) !important
+  transform: scale(.96)
+
+
+.square
+  flex-grow: 1
+
+.tab
+  flex-grow: 1.4
+
+.caps-lock
+  flex-grow: 1.7
+
+.shift.left
+  flex-grow: 2.1
+
+.row:last-child > .special:not(.space)
+  flex-grow: 1.4
+
+.backspace
+  flex-grow: 2
+
+.backslash
+  flex-grow: 1.6
+
+.enter
+  flex-grow: 2.3
+
+.shift.right
+  flex-grow: 2.9
+
+.space
+  flex-grow: 5.2
+
+
+.secondary
+  color: #bbb
+
+
+.left > span, .right > span
   align-self: flex-start
-}
 
-.right > span {
-  align-self: flex-end;
-}
 
-.special > span {
-  font-size: 0.75rem;
-}
+.right > span
+  align-self: flex-end
 
-[wrong-count] {
-  background: var(--accent1);
-  filter: saturate(calc(var(--wrong-count) * 20% + 60%))
-}
 
-[expected-count] {
-  --color: calc(var(--expected-count) * 40 + 190);
-  background: rgba(var(--color),var(--color),var(--color), 0.6);
-  color: rgb(43, 30, 51) !important;
-}
+.special > span
+  font-size: 0.75rem
 
-[wrong-count][expected-count] {
-   background: rgba(calc(var(--color) + 20), calc(var(--color) - 30), calc(var(--color) + 50), 1);
-}
+[wrong-count]
+  background: var(--accent1)
+  filter: unquote("saturate(calc(var(--wrong-count) * 20% + 60%))")
 
-.locked {
-  outline: 2px solid var(--accent2);
-}
+[expected-count]
+  --color: calc(var(--expected-count) * 40 + 190)
+  background: rgba(var(--color),var(--color),var(--color), 0.6)
+  color: rgb(43, 30, 51) !important
+
+[wrong-count][expected-count]
+   background: rgba(calc(var(--color) + 20), calc(var(--color) - 30), calc(var(--color) + 50), 1)
+
+
+.locked
+  outline: 2px solid var(--accent2)
+
 </style>

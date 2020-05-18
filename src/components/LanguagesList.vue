@@ -1,41 +1,41 @@
 <template>
-  <div class="choose-language">
-    <h2>Wybierz język</h2>
-    <div class="controls">
+  <div>
+    <div class="search">
       <input
         v-model="searchText"
         type="text"
         placeholder="Filtruj"
+        class="searchInput"
       >
-      <button :disabled="room.connected && !room.owner" @click="selectRandom">
+    </div>
+    <div ref="languagesList" class="languages list">
+      <button
+        :disabled="room.connected && !room.owner"
+        class="language random"
+        :class="{'selected': language.index === null}"
+        @click="selectRandom"
+      >
         Wylosuj
       </button>
-    </div>
-    <div class="languages-list-container">
-      <transition>
-        <div v-if="!languagesList" class="languages-list-loading">
-          Loading
-        </div>
-      </transition>
-      <div class="languages-list">
-        <label
-          v-for="filteredLanguage in filteredList"
-          :id="filteredLanguage.index"
-          :key="filteredLanguage.name"
-          :class="{'highlight':language.index == filteredLanguage.index}"
+      <label
+        v-for="(filteredLanguage, index) in filteredList"
+        :key="filteredLanguage.name === 'Ładowanie' ? index : filteredLanguage.name"
+        class="language"
+        :class="{'selected':language.index === filteredLanguage.index}"
+      >
+        <input
+          v-model="language"
+          type="radio"
+          class="language-radio"
+          :disabled="room.connected && !room.owner"
+          :index="filteredLanguage.index"
+          :value="languagesList[filteredLanguage.index]"
+          @input="setRoomLanguage"
         >
-          <input
-            v-model="language"
-            type="radio"
-            name="language-radio"
-            :disabled="room.connected && !room.owner"
-            :index="filteredLanguage.index"
-            :value="languagesList[filteredLanguage.index]"
-            @input="setRoomLanguage"
-          >
-          <span class="language-name">{{ filteredLanguage.name.replace('_', ' ') }}</span>
-        </label>
-      </div>
+        <span class="stat"><span>41</span><span>WPM</span></span>
+        <span class="language-name">{{ filteredLanguage.name.replace('_', ' ') }}</span>
+        <span class="stat"><span>24</span><span><fa :icon="['fas', 'play']" /></span></span>
+      </label>
     </div>
   </div>
 </template>
@@ -61,26 +61,21 @@ export default {
     ...mapGetters(['languagesList', 'room']),
     ...mapFields(['language']),
     filteredList() {
-      return this.languagesList.filter((language) => language.name.toLowerCase().includes(this.searchText.toLowerCase()));
+      if (this.languagesList.length) {
+        const search = this.searchText.toLowerCase();
+        const filtered = this.languagesList
+          .filter((language) => language.name.toLowerCase().includes(search))
+          .sort((a, b) => (b.name.toLowerCase().startsWith(search) ? 1 : -1));
+        return filtered.length > 0 ? filtered : this.languagesList;
+      }
+      return [...Array(29)].map(() => ({ name: 'Ładowanie' }));
     },
-    // selectedLanguageIndex: {
-    //   get() {
-    //     if (this.language.index) {
-    //       console.warn('updating selected language');
-    //       return this.language.index;
-    //     }
-    //     return null;
-    //   },
-    //   set(index) {
-    //     this.$store.commit('SET_LANGUAGE', { ...this.languagesList[index] });
-    //     if (this.room.owner) {
-    //       this.$socket.client.emit('language_change', index);
-    //     }
-    //   },
-    // },
   },
-  created() {
-    this.$store.dispatch('loadLanguagesList');
+  activated() {
+    this.$store.commit('ADD_TRACKED_CONTAINER', this.$refs.languagesList);
+  },
+  deactivated() {
+    this.$store.commit('REMOVE_TRACKED_CONTAINER', this.$refs.languagesList.className);
   },
   // activated() {
   //   if (this.language.index) {
@@ -91,11 +86,13 @@ export default {
   methods: {
     selectRandom() {
       const index = Math.floor(Math.random() * this.filteredList.length);
-      const newLanguageIndex = this.languagesList[index].index;
-      if (newLanguageIndex === this.index && this.filteredList.length > 1) {
+      if (this.filteredList[index].index === this.language.index && this.filteredList.length > 1) {
         this.selectRandom();
       } else {
-        this.index = newLanguageIndex;
+        this.language = this.filteredList[index];
+        if (this.room.owner) {
+          this.$socket.client.emit('languageChange', index);
+        }
       }
     },
     setRoomLanguage(ev) {
@@ -107,32 +104,80 @@ export default {
 };
 </script>
 
-<style scoped>
-.languages-list {
-  padding: .5em 0;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: .5em;
-}
+<style lang="sass" scoped>
 
-input[type="radio"] {
-  display: none;
-}
+$blue-gradient-colors: $light-blue, mix($light-blue, $grid-color, 30)
+.search
+  margin-bottom: $grid-gap
+  border-bottom: $grid-gap solid $grid-color
+  width: 100%
+  padding: 2 * $grid-gap
 
-label {
-  border: 2px solid;
-  border-radius: 5px;
-  border-image: linear-gradient(30deg, var(--accent1), var(--accent2)) 1;
-  padding: 1em;
-  text-align: center;
-}
+  &:focus-within
+    border-image: linear-gradient(to right, $light-blue, $grid-color 90%) 1
 
-label:hover {
-  background: linear-gradient(30deg, rgba(145, 28, 213, .4), rgba(96, 67, 253, .4));
-}
+input::placeholder
+  color: $grey
 
-label.highlight {
-  background: linear-gradient(30deg, var(--accent1), var(--accent2));
-}
+.list
+  flex-grow: 1
+  position: relative
+  background: transparent radial-gradient(250px at var(--mouse-x) var(--mouse-y), rgba($white, 0.2) 10%, transparent 90%) no-repeat 0 0
+  padding: $grid-gap
+  display: grid
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr))
+  grid-gap: $grid-gap
+  text-align: center
+  overflow-y: auto
+
+.list
+  &::-webkit-scrollbar
+    width: $gap / 2
+  &::-webkit-scrollbar-thumb
+    background: linear-gradient(to bottom, $blue-gradient-colors)
+
+  &::-webkit-scrollbar-track
+    background-color: $grid-color
+
+.language-radio
+  display: none
+
+.language
+  min-height: 40px
+  position: relative
+  cursor: pointer
+  background: $navy-grey
+  opacity: 0.95
+  box-shadow: 0px 0px 2px 2px rgba(black, .1)
+  display: flex
+  justify-content: space-around
+  align-items: center
+  background: linear-gradient(to right, $blue-gradient-colors 50%, $grid-color 50% 100%)
+  background-size: 200%
+  background-position: right
+  transition: background .1s ease-in
+
+  &:hover
+    opacity: 0.85
+
+.stat
+  padding: 0.2em
+  opacity: 0
+  color: $grey
+  font-size: 0.9em
+  width: 3em
+  display: flex
+  flex-direction: column
+  justify-content: space-between
+
+.language:hover > .stat
+  opacity: 1
+
+.selected
+  background-position: left
+  transition: background 0.3s ease-in-out
+
+.selected:hover > .stat
+  opacity: 0
 
 </style>

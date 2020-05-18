@@ -1,109 +1,143 @@
 <template>
-  <div id="app">
+  <div id="app" ref="app">
     <template v-if="!tooSmall">
-      <NavBar />
-      <keep-alive :exclude="['Run', 'Results']">
-        <router-view />
-      </keep-alive>
-      <PlayersList v-if="room.connected && $route.path !== '/run'" />
+      <aside ref="navLeft" class="nav-left" :class="[{thin: isPlaying }]">
+        <NavColumn :class="[{thin: isPlaying }]" />
+      </aside>
+      <main>
+        <keep-alive :exclude="['Run', 'Results']">
+          <router-view />
+        </keep-alive>
+      </main>
     </template>
     <SmallScreen v-else />
   </div>
 </template>
 
 <script>
-import NavBar from '@/components/NavBar.vue';
-import PlayersList from '@/components/PlayersList.vue';
+import NavColumn from '@/components/NavColumn.vue';
 import SmallScreen from '@/views/SmallScreen.vue';
 import { mapGetters } from 'vuex';
 
 export default {
   components: {
-    NavBar,
+    NavColumn,
     SmallScreen,
-    PlayersList,
   },
   computed: {
-    ...mapGetters(['room']),
+    ...mapGetters(['room', 'trackedContainers']),
     tooSmall() {
-      return this.windowWidth < 640 || this.windowHeight < 480;
+      return window.innerWidth < 640 || window.innerHeight < 480;
+    },
+    isPlaying() {
+      return this.$route.path === '/run';
+    },
+  },
+  created() {
+    this.$store.dispatch('loadLanguagesList');
+  },
+  mounted() {
+    if (window.innerWidth > 1300) {
+      document.addEventListener('mousemove', this.trackMouse);
+      this.$store.commit('ADD_TRACKED_CONTAINER', this.$refs.navLeft);
+    }
+  },
+  methods: {
+    trackMouse(ev) {
+      if (!this.rafActive) {
+        this.rafActive = true;
+        requestAnimationFrame(() => {
+          this.rafActive = false;
+          this.trackedContainers.forEach((element) => {
+            // console.log(element.tagName, element.className);
+            const pos = element.getBoundingClientRect();
+            const x = ev.pageX - pos.left;
+            const y = ev.pageY - pos.top;
+            element.style.setProperty('--mouse-x', `${x}px`);
+            element.style.setProperty('--mouse-y', `${y}px`);
+          });
+        });
+      }
     },
   },
 };
 </script>
 
-<style>
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+<style lang="sass">
+*
+  box-sizing: border-box
+  margin: 0
+  padding: 0
 
-:root {
-  --accent1: #911cd5;
-  --accent2: #6043fd;
-}
 
-body {
-  font-family: 'Montserrat', sans-serif;
-}
+body
+  font-family: sans-serif
 
-#app {
-  margin: 0;
-  position: relative;
-  width: 100%;
-  min-height: 100vh;
-  color: white;
-  padding: .5% 5%;
-  letter-spacing: 2px;
-  background: linear-gradient(0, #2b1e33, #2f2a44);
-  /* background: #464646; */
-}
+#app
+  position: relative
+  width: 100%
+  min-height: 100vh
+  color: $white
+  padding: $gap
+  background: radial-gradient(at top left, $navy-grey ,$light-navy)
+  display: flex
+  justify-content: space-between
 
-a {
-  color: grey;
-}
-input {
-  margin: 4px;
-}
+aside
+  width: 15vw
+  min-width: min-content
+  margin-right: $gap * 2
+  padding: $grid-gap
+  flex-shrink: 0
+  background: transparent radial-gradient(250px at var(--mouse-x) var(--mouse-y), rgba($white, 0.2) 10%, transparent 90%) no-repeat 0 0
+  @include shadow()
+  transition: transform $nav-trans-dur $nav-trans-timing 0s
 
-button, input, select {
-  outline: 0;
-  border: 2px solid;
-  border-radius: 5px;
-  border-image: linear-gradient(30deg, var(--accent1), var(--accent2)) 1;
-  padding: .5em 1em;
-  color: white;
-  background: none;
-}
+aside.thin
+  transition-delay: $nav-trans-dur
+  transform: translateX(-$nav-move)
 
-option {
-  color: purple;
-  background: none;
-}
+main
+  flex-grow: 1
 
-button:active {
-  background: linear-gradient(30deg, var(--accent1), var(--accent2));
-}
+button, a, input[type="checkbox"], input[type="radio"]
+  cursor: pointer
 
-.CodeMirror, .CodeMirror-gutters {
-  font-size: 1.5rem;
-  height: auto !important;
-  color: white;
-  background: transparent !important;
-}
+option
+  color: purple
+  background: none
 
-.CodeMirror-Line {
-  /* if no theme loaded */
-  color: white !important;
-}
+.CodeMirror, .CodeMirror-gutters
+  font-size: 1.5rem
+  height: auto !important
+  color: white
+  background: transparent !important
 
-.CodeMirror-linenumber {
-  width: 1rem !important;
-}
+  // if no theme loaded
+.CodeMirror
+  color: white !important
 
-.cm-error:not(.mark) {
-  background-color: transparent !important;
-}
+.CodeMirror pre.CodeMirror-line
+  color: white !important
 
+
+.CodeMirror-linenumber
+  width: 1rem !important
+
+
+.cm-error:not(.mark)
+  background-color: transparent !important
+
+@media (max-width: 900px), (max-height: 700px)
+  .toggles
+    label
+      margin-top: 1em
+  .list
+    margin-bottom: 1em
+
+  #app
+    padding: 1em
+
+  aside
+    margin-right: 1em
 </style>

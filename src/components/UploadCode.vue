@@ -1,21 +1,20 @@
 <template>
-  <div>
+  <div class="wrapper">
+    <p v-if="!language.index">
+      Wybierz język
+    </p>
+    <p v-else-if="!editorReady">
+      Ładowanie edytora...
+    </p>
     <div class="settings">
       <div v-if="$route.path === '/contribute'" class="">
         <label>Nazwa</label>
         <input v-model="name" type="text">
       </div>
-      <label>Język
-        <select id="language" v-model="languageIndex" name="language">
-          <option disabled selected :value="null">Wybierz</option>
-          <option v-for="(language, index) in languagesList" :key="index" :value="index">{{ language.name.replace('_', ' ') }}</option>
-        </select>
-      </label>
       <label>Rozmiar Tab'a: {{ tabWidth }}
         <input v-model="tabSize" type="checkbox">
       </label>
     </div>
-    <p>{{ loadingMsg }}</p>
     <div class="code" :class="{ready: editorReady}">
       <codemirror
         v-model="code"
@@ -47,14 +46,13 @@ export default {
   data() {
     return {
       code: '',
-      languageIndex: null,
-      currentLanguage: undefined,
-      loadingMsg: '',
       confirmMsg: '',
       name: '',
       timeout: 0,
       editorReady: false,
       tabSize: false,
+      cursorScrollMargin: 100,
+      viewportMargin: Infinity,
     };
   },
   computed: {
@@ -78,30 +76,21 @@ export default {
     },
   },
   watch: {
-    async languageIndex() {
-      this.loadingMsg = 'Ładowanie edytora...';
-      try {
-        this.currentLanguage = this.languagesList[this.languageIndex];
-        console.log('WATCHER');
-        await loadMode(this.cm, this.currentLanguage.mode);
-        this.editorReady = true;
-        this.loadingMsg = 'Wklej kod tutaj: ';
-      } catch (e) {
-        this.loadingMsg = 'Error';
-        console.error(e);
-      }
-      this.$store.commit('SET_LANGUAGE', this.currentLanguage);
+    async language() {
+      this.editorReady = false;
+      await loadMode(this.cm, this.language.mode);
+      this.editorReady = true;
     },
   },
   created() {
-    this.$store.dispatch('loadLanguagesList');
     loadTheme();
   },
-  activated() {
-    console.log(this.languageIndex);
+  mounted() {
+    console.log('Activated');
+    console.log(this.language.index);
     if (this.language.index) {
-      this.languageIndex = this.language.index;
-      console.log(this.languageIndex);
+      loadMode(this.cm, this.language.mode);
+      this.editorReady = true;
     }
     if (this.code) {
       this.useCustomCode();
@@ -149,18 +138,34 @@ export default {
 };
 </script>
 
-<style scoped>
-.buttons {
-  margin-top: 3em;
-  z-index: 10;
-}
+<style lang="sass"  scoped>
+.wrapper
+  padding-top: 2em
+  display: flex
+  justify-content: space-between
+  flex-direction: column
+  position: relative
 
-.code {
-  opacity: 0;
-  transition: opacity .5s ease-in;
-}
 
-.code.ready {
-  opacity: 1;
-}
+.buttons
+  margin-top: 3em
+
+.code
+  opacity: 0
+  flex-grow: 1
+  margin-top: $gap
+  transition: opacity .5s ease-in
+
+.vue-codemirror
+  position: relative
+  height: 55vh
+  display: flex
+  flex-direction: column
+
+.vue-codemirror >>> .CodeMirror
+  // flex-grow: 1
+
+.code.ready
+  opacity: 1
+
 </style>

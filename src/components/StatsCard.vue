@@ -120,14 +120,14 @@ export default {
 };
 </script>
 
-<style scoped>
-table {
-  border-collapse: separate;
-  border-spacing: 2px 4px;
-}
-td {
-  width: 100px;
-  text-align: center;
-}
+<style lang="sass" scoped>
+table
+  border-collapse: separate
+  border-spacing: 2px 4px
+
+td
+  width: 100px
+  text-align: center
+
 
 </style>

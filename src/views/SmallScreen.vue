@@ -12,16 +12,16 @@ export default {
 };
 </script>
 
-<style scoped>
-.container {
-  height: 100vh;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  align-items: center;
-}
+<style lang="sass"  scoped>
+.container
+  height: 100vh
+  display: flex
+  flex-direction: row
+  justify-content: space-around
+  align-items: center
 
-div {
-  text-align: center;
-}
+
+div
+  text-align: center
+
 </style

@@ -97,22 +97,19 @@ export default {
 
 </script>
 
-<style scoped>
-.main {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  min-height: 100%;
-}
+<style lang="sass" scoped>
+.main
+  display: flex
+  flex-wrap: wrap
+  justify-content: space-between
+  min-height: 100%
 
-.code {
-  flex-grow: 1;
-}
 
-@media (max-width: 900) {
-  .main {
-    display: block;
-  }
-}
+.code
+  flex-grow: 1
 
+
+@media (max-width: 900)
+  .main
+    display: block
 </style>

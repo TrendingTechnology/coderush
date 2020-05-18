@@ -40,12 +40,15 @@ export default {
 };
 </script>
 
-<style scoped>
-.owner {
-  color: greenyellow;
-}
-.me {
-  color: pink;
-}
+<style lang="sass" scoped>
+.owner
+  color: greenyellow
+
+.me
+  color: pink
+
+ol
+  list-style: inside
+  overflow: auto
 
 </style>

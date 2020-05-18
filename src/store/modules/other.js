@@ -10,12 +10,14 @@ const state = {
     showEditor: false,
   },
   codeInfo: {},
+  trackedContainers: [],
 };
 
 const getters = {
   languagesList: (state) => state.languagesList,
   customCode: (state) => state.customCode,
   codeInfo: (state) => state.codeInfo,
+  trackedContainers: (state) => state.trackedContainers,
 };
 
 const actions = {
@@ -31,7 +33,9 @@ const actions = {
     }
   },
   deleteCustomCode: (context) => {
-    context.commit('SET_CUSTOM_CODE', { text: '', tabSize: 0, lines: 0 });
+    context.commit('SET_CUSTOM_CODE', {
+      text: '', tabSize: 0, lines: 0, showEditor: false,
+    });
   },
   generateCodeInfo: ({ state, rootState, commit }, fileIndex) => {
     let codeInfo = {};
@@ -59,6 +63,15 @@ const mutations = {
   },
   SET_CODE_INFO(state, codeInfo) {
     state.codeInfo = codeInfo;
+  },
+  ADD_TRACKED_CONTAINER(state, container) {
+    state.trackedContainers.push(container);
+  },
+  REMOVE_TRACKED_CONTAINER(state, className) {
+    const index = state.trackedContainers.findIndex((el) => el.className === className);
+    if (index !== -1) {
+      state.trackedContainers.splice(index, 1);
+    }
   },
 };
 

@@ -1,52 +1,80 @@
 <template>
-  <div>
-    <div class="settings" @input.capture="updateOption">
-      <h2>Jak chcesz grać?</h2>
-      <div class="basic">
-        <h2>Ustawienia</h2>
-        <label for="select-theme">Motyw</label>
-        <select
-          id="select-theme"
-          v-model="theme"
+  <main @input.capture="updateOption">
+    <h2>Jak chcesz grać?</h2>
+    <p class="select-text">
+      Tryb gry
+    </p>
+    <div ref="modesList" class="modes list">
+      <label
+        v-for="(mode, index) in modesList"
+        :key="mode[0]"
+        :class="{'selected': index+1 === selectedMode, 'small': customCode.showEditor}"
+        class="mode"
+      >
+        <div class="container">
+          <span>{{ mode[0] }}</span>
+          <span class="modeDesc">{{ mode[1] }}</span>
+        </div>
+
+        <input
+          v-model="selectedMode"
+          name="mode"
+          :value="index+1"
+          type="radio"
         >
-          <option value="material-darker">
-            Material Dark
-          </option>
-          <option value="one-dark">
-            Atom One Dark
-          </option>
-          <option value="">
-            None (hardcore)
-          </option>
-        </select>
-        <label>Podkreśl następny znak
-          <input v-model="underScore" type="checkbox">
-        </label>
-        <label>Tylko krótkie
-          <input
-            v-model="codeLength"
-            :disabled="block"
-            name="codeLength"
-            type="checkbox"
-          >
-        </label>
-      </div>
-      <div class="advanced">
-        <!-- 0 / 1 slider button -->
-        <label>Numeruj linie
-          <input v-model="lineNumbers" type="checkbox">
-        </label>
-        <label>Automatyczne wcięcie nowej lini
-          <input
-            v-model="autoIndent"
-            :disabled="block"
-            name="autoIndent"
-            type="checkbox"
-          >
-        </label>
-      </div>
+      </label>
     </div>
-  </div>
+    <p class="select-text">
+      Motyw
+    </p>
+    <div ref="themesList" class="themes list">
+      <label
+        v-for="(theme) in themesList"
+        :key="theme[0]"
+        :class="{'selected': theme[0] === selectedTheme}"
+        class="theme"
+      >
+        <span>{{ theme[1] }}</span>
+        <input
+          v-model="selectedTheme"
+          :value="theme[0]"
+          type="radio"
+        >
+      </label>
+    </div>
+    <div class="toggles">
+      <label>
+        <span>Podkreśl następny znak</span>
+        <input v-model="underScore" type="checkbox">
+        <div class="slider" />
+      </label>
+      <label>
+        <span>Automatyczne wcięcie nowej lini</span>
+        <input
+          v-model="autoIndent"
+          :disabled="block"
+          name="autoIndent"
+          type="checkbox"
+        >
+        <div class="slider" />
+      </label>
+      <label>
+        <span>Tylko krótkie</span>
+        <input
+          v-model="codeLength"
+          :disabled="block"
+          name="codeLength"
+          type="checkbox"
+        >
+        <div class="slider" />
+      </label>
+      <label>
+        <span>Numeruj linie</span>
+        <input v-model="lineNumbers" type="checkbox">
+        <div class="slider" />
+      </label>
+    </div>
+  </main>
 </template>
 
 <script>
@@ -59,12 +87,35 @@ const { mapFields } = createHelpers({
 });
 export default {
   name: 'SettingsMenu',
+  data() {
+    return {
+      themesList: [
+        ['material-darker', 'Material Dark'],
+        ['one-dark', 'Atom One Dark'],
+        ['Base2Tone-Suburb-dark', 'Base2Tone Suburb Dark'],
+        ['', 'Bez motywu'],
+      ],
+      modesList: [
+        ['Normalny', 'Just normal'],
+        ['Bez poprawiania', '(coming soon)'],
+        ['100 sekund', '(coming not that soon)'],
+      ],
+    };
+  },
   computed: {
-    ...mapGetters(['room']),
-    ...mapFields(['theme', 'underScore', 'codeLength', 'lineNumbers', 'autoIndent']),
+    ...mapGetters(['room', 'customCode']),
+    ...mapFields(['selectedTheme', 'selectedMode', 'underScore', 'codeLength', 'lineNumbers', 'autoIndent']),
     block() {
       return this.room.connected && !this.room.owner;
     },
+  },
+  activated() {
+    this.$store.commit('ADD_TRACKED_CONTAINER', this.$refs.modesList);
+    this.$store.commit('ADD_TRACKED_CONTAINER', this.$refs.themesList);
+  },
+  deactivated() {
+    this.$store.commit('REMOVE_TRACKED_CONTAINER', this.$refs.modesList.className);
+    this.$store.commit('REMOVE_TRACKED_CONTAINER', this.$refs.themesList.className);
   },
   methods: {
     updateOption(ev) {
@@ -76,7 +127,137 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="sass" scoped>
+main
+  display: flex
+  flex-direction: column
+  justify-content: flex-start
 
+.fold
+  overflow: hidden
+  .themes, .toggles
+    display: none
+
+h2
+  margin: $grid-gap 0 $grid-gap $grid-gap
+
+.select-text
+  text-align: right
+  color: $grey
+  margin: 1em 2 * $grid-gap $grid-gap 0
+
+$purple-gradient-colors: $purple, mix($light-purple, $grid-color, 80)
+
+.list
+  padding: $grid-gap
+  display: grid
+  grid-gap: $grid-gap
+  background: transparent radial-gradient(250px at var(--mouse-x) var(--mouse-y), rgba($white, 0.2) 10%, transparent 90%) no-repeat 0 0
+  text-align: center
+  margin-bottom: $gap
+
+  label
+    position: relative
+    cursor: pointer
+    opacity: 0.95
+    box-shadow: 0px 0px 2px 2px rgba(black, .1)
+    display: flex
+    flex-direction: column
+    justify-content: space-around
+    align-items: center
+    min-height: 40px
+    background: linear-gradient(to right, $purple-gradient-colors 50%, $grid-color 50% 100%)
+    background-size: 201%
+    background-position: right
+    transition: background .2s ease-in
+
+    .container
+      margin-top: 2em
+      display: flex
+      flex-direction: column
+      align-items: center
+      justify-content: space-around
+
+    span
+      margin: 2em 0.5em
+
+    .modeDesc
+      color: #bbb
+      font-size: 0.9em
+      width: 60%
+      text-align: center
+
+
+  .selected
+    transition: background .4s ease-in-out
+    background-position: left
+
+.small
+  .container
+    margin-top: 0 !important
+
+.modes
+  flex-shrink: 2
+  flex-grow: 2
+  max-height: 250px
+  grid-template-columns: repeat(3, minmax(max-content, 1fr))
+
+.themes
+  grid-template-columns: repeat(2, 1fr)
+  grid-template-rows: 50px 50px
+
+.toggles
+  width: 100%
+  position: relative
+  padding: 0 3 * $grid-gap 0 2 * $grid-gap
+  overflow: hidden // omg zabij sie
+
+  label
+    display: flex
+    justify-content: space-between
+    width: 100%
+    position: relative
+    cursor: pointer
+    margin-top: $gap
+
+  $width: 70px
+  $trans-duration: .15s
+  .slider
+    position: relative
+    width: $width
+    height: 20px
+    background: linear-gradient(to right, $purple, $light-purple 50%, $grey 50% 100%)
+    background-size: 200%
+    background-position: right
+    @include shadow(0.5)
+    transition: background $trans-duration ease-in-out, transform 0.07s ease-in-out
+
+  .slider:after
+    content: ''
+    z-index: 3
+    left: -0.5rem
+    top: calc((1.6rem - 20px) / -2)
+    width: 1rem
+    height: 1.6rem
+    position: absolute
+    background-color: $white
+    @include shadow()
+    transition: transform $trans-duration ease-in-out
+
+  input:active + .slider:after
+    transform: scale(0.75)
+
+  input:checked + .slider
+    background-position: left
+
+  input:checked + .slider:after
+    transform: translateX($width)
+
+@media (max-height: 700px)
+  .toggles
+    label
+      margin-top: 1em
+  .list
+    margin-bottom: 1em
 
 </style>

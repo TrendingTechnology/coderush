@@ -1,8 +1,5 @@
 <template>
-  <div>
-    <h1>CodeRush</h1>
-
-  </div>
+  <div />
 </template>
 
 <script>

@@ -3,8 +3,11 @@
     <div class="countdown">
       <h2> {{ countdownText }} </h2>
     </div>
-    <button :disabled="room.connected" @click="$emit('reset')">
+    <button class="reset" :disabled="room.connected" @click="$emit('reset')">
       Resetuj
+    </button>
+    <button :disabled="room.connected" @click="completed()">
+      Zakończ teraz
     </button>
     <div class="code" :class="{ready: editorsReady, completed: isCompleted, heatMap: heatMapReady}">
       <codemirror
@@ -89,7 +92,7 @@ export default {
         spellcheck: false,
         autocorrect: false,
         showCursorWhenSelecting: true,
-        theme: this.options.theme,
+        theme: this.options.selectedTheme,
         cursorScrollMargin: 100,
         // scrollbarStyle: null,
         extraKeys: {
@@ -351,12 +354,12 @@ export default {
           this.editorCm.execCommand('goColumnLeft');
           this.start(interval);
         }
-      }, 50);
+      }, 450);
 
 
       console.log('loadMode ', Date.now());
 
-      Promise.all([this.getCode(), loadTheme(this.options.theme), loadMode(this.originalCm, this.language.mode)])
+      Promise.all([this.getCode(), loadTheme(this.options.selectedTheme), loadMode(this.originalCm, this.language.mode)])
         .then((resp) => {
           console.log(resp);
           [this.originalCode] = resp;
@@ -434,132 +437,124 @@ export default {
 };
 </script>
 
-<style scoped>
-.container {
-  position: relative;
-}
-
-.info h4 {
-  color: lightgray;
-}
-
-.code {
-  opacity: 0;
-  transition: opacity .5s ease-in;
-  position: relative;
-}
-
-.ready {
-  opacity: 1;
-}
-
-.code {
-  margin-top: 10px;
-  /* pointer-events: none !important; */
-  position: relative;
-}
+<style lang="sass" scoped>
+.container
+  position: relative
 
 
-.code >>> .CodeMirror-line {
-  line-break: anywhere !important;
-}
-
-.code >>> .CodeMirror {
-  /* height: 70vh !important; */
-  height: 500px !important;
-}
-
-.completed >>> .CodeMirror {
-  height: 100% !important;
-}
-
-.completed {
-    overflow-y: auto;
-    max-height: 70vh;
-}
-  /* transition: max-height 1s;
-}
-
-.completed >>> .CodeMirror {
-  max-height: none;
-} */
-
-#editor {
-  position: absolute;
-  width: 90%;
-  top: 0;
-}
-
-#editor >>> .CodeMirror-linenumber {
-  opacity: 0;
-}
+.info h4
+  color: lightgray
 
 
-#original >>> .CodeMirror-line {
-  z-index: 0;
-  opacity: 0.7;
-  will-change: filter;
-  filter: saturate(80%);
-  transition: opacity 2s, filter 2s;
-}
-
-.heatMap #original {
-  opacity: 1;
-}
-
-.heatMap #original{
-  /* filter: blur(9px); */
-}
-
-.heatMap #editor >>> .CodeMirror-linenumber {
-  opacity: 1;
-}
+.code
+  opacity: 0
+  transition: opacity .5s ease-in
+  position: relative
 
 
-.completed #original >>> .CodeMirror-code span {
-  color: transparent !important;
-}
+.ready
+  opacity: 1
 
-.completed >>> .mark {
-  opacity: 0;
-}
+.code
+  margin-top: 10px
+  // pointer-events: none !important
+  position: relative
 
 
-#editor >>> .CodeMirror,#editor >>> .CodeMirror-gutters {
-  background: transparent;
-}
+.code ::v-deep .CodeMirror-line
+  line-break: anywhere !important
 
-.code >>> .mark {
-  background-color: rgba(255, 255, 255, .3);
-}
 
-.heatMap >>> .mark {
-  /* background-color: rgba(11, 192, 238, 0.8) !important; */
-  background-color: var(--accent1);
-  outline: 0.2em solid var(--accent1);
-  /* background-color: rgba(255, 255, 255, 0.0); */
-  /* outline-offset: 1px;
-  outline: 8px solid rgba(255, 255, 255, 1); */
-  opacity: 1;
-  transition: opacity .7s ease-out;
-}
+.code ::v-deep .CodeMirror
+  // height: 70vh !important
+  height: 500px !important
 
-.heatMap #original >>> .CodeMirror-linenumber {
-  opacity: 0;
-}
 
-.heatMap #original >>> .CodeMirror-line {
-  opacity: 1;
-}
+.completed ::v-deep .CodeMirror
+  height: 100% !important
 
-#editor >>> .underScoreHidden {
-  opacity: 0;
-}
 
-#editor >>> .underScore {
-  display: inline-block;
-  font-size: 0.9em;
-  transform: translateY(4px) !important;
-  filter: saturate(70%);
-}
+.completed
+    overflow-y: auto
+    max-height: 70vh
+
+#editor
+  position: absolute
+  width: 90%
+  top: 0
+
+
+#editor ::v-deep .CodeMirror-linenumber
+  opacity: 0
+
+
+#original ::v-deep .CodeMirror-line
+  z-index: 0
+  opacity: 0.7
+  will-change: filter
+  filter: saturate(80%)
+  transition: opacity 2s, filter 2s
+
+
+.heatMap #original
+  opacity: 1
+
+
+.heatMap #original
+  // filter: blur(9px)
+
+
+.heatMap #editor ::v-deep .CodeMirror-linenumber
+  opacity: 1
+
+
+.completed #original ::v-deep .CodeMirror-code span
+  color: transparent !important
+
+
+.completed ::v-deep .mark
+  opacity: 0
+
+
+#editor ::v-deep .CodeMirror,#editor ::v-deep .CodeMirror-gutters
+  background: transparent
+
+
+.code ::v-deep .mark
+  background-color: rgba(255, 255, 255, .3)
+
+
+.heatMap ::v-deep .mark
+  // background-color: rgba(11, 192, 238, 0.8) !important
+  background-color: var(--accent1)
+  outline: 0.2em solid var(--accent1)
+  // background-color: rgba(255, 255, 255, 0.0)
+  // outline-offset: 1px
+  // outline: 8px solid rgba(255, 255, 255, 1)
+  opacity: 1
+  transition: opacity .7s ease-out
+
+
+.heatMap #original ::v-deep .CodeMirror-linenumber
+  opacity: 0
+
+
+.heatMap #original ::v-deep .CodeMirror-line
+  opacity: 1
+
+
+#editor ::v-deep .underScoreHidden
+  opacity: 0
+
+
+#editor ::v-deep .underScore
+  display: inline-block
+  font-size: 0.9em
+  transform: translateY(4px) !important
+  filter: saturate(70%)
+
+
+.reset
+  margin-right: 1em
+  margin-top: .5em
 </style>

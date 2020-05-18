@@ -2,7 +2,6 @@
   <div>
     <h1>Kontrybuuj</h1>
     <UploadCode />
-
   </div>
 </template>
 

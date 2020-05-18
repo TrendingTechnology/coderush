@@ -1,16 +1,18 @@
 import { getField, updateField } from 'vuex-map-fields';
 
 const state = {
-  userLanguage: 'polish',
+  userLanguage: false,
   language: {
     index: null,
   },
   options: {
     codeLength: false,
     lineNumbers: true,
-    theme: 'material-darker',
+    selectedTheme: 'material-darker',
+    selectedMode: 1,
     autoIndent: true,
     underScore: false,
+    mode: 1,
   },
 };
 
@@ -25,6 +27,9 @@ const getters = {
 const actions = {};
 
 const mutations = {
+  USER_LANGUAGE: (state) => {
+    state.userLanguage = !state.userLanguage;
+  },
   SET_LANGUAGE: (state, languageObj) => {
     state.language = languageObj;
   },
