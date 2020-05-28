@@ -85,6 +85,9 @@
         </button>
         <PlayersList v-if="room.connected && $route.path !== '/run'" />
       </div>
+      <p style="transform: translateY(300px);">
+        Made with <fa :icon="['fas', 'heart']" /> by Łukasz Wielgus
+      </p>
     </div>
   </nav>
 </template>
