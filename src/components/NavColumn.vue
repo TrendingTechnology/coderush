@@ -86,8 +86,8 @@
         <PlayersList v-if="room.connected && $route.path !== '/run'" />
       </div>
     </div>
-    <p style="align-self: flex-end; transform: translateX(-1.5em)">
-      Made with <fa :icon="['fas', 'heart']" /> by Łukasz Wielgus
+    <p class="author">
+      Made with <fa :icon="['fas', 'heart']" class="heart" /> by Łukasz Wielgus
     </p>
   </nav>
 </template>
@@ -232,11 +232,14 @@ nav:after
   .btn-text, .title, .room
     transition-delay: 0s
     opacity: 0
-  svg
+  svg:not(.heart)
     transition-delay: $nav-trans-dur
     transform: translateX($nav-move + 1)
+  .author
+    opacity: 0
+    transition-delay: $nav-trans-dur
 
-.btn-text, .title, .room
+.btn-text, .title, .room, .author
   transition: opacity $nav-trans-dur $nav-trans-timing $nav-trans-dur
 
 .title
@@ -288,5 +291,7 @@ button
 button:disabled
   cursor: not-allowed
 
-
+.author
+  align-self: flex-end
+  transform: translateX(-1.5em)
 </style>
