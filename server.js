@@ -13,7 +13,7 @@ const io = require('socket.io')(http);
 const PATH = path.join(__dirname, '/master');
 console.warn(PATH);
 
-fs.copySync('dist', 'master', { overwrite: true, filter: (path) => !path.includes('.json') && !path.includes('code') });
+fs.copySync('dist', 'master', { overwrite: true, filter: (filePath) => !filePath.includes('.json') && !filePath.includes('code') });
 
 let list = {};
 let stringifiedList = '';
@@ -27,7 +27,6 @@ fs.readFile(`${PATH}/list.json`, 'utf8', (err, data) => {
   stringifiedList = data;
   list = JSON.parse(data);
 });
-
 
 setInterval(() => {
   try {
@@ -83,7 +82,6 @@ app.post('/upload', cors(), (req, res) => {
   res.send('OK');
 });
 
-
 app.use(fallback('index.html', { root: PATH }));
 
 const rooms = {};
@@ -125,7 +123,6 @@ io.on('connection', (socket) => {
       socket.emit('room_created');
     });
   }
-
 
   socket.on('optionChange', (option) => {
     rooms[roomName].options[option.name] = option.data;

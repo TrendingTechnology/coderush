@@ -114,7 +114,6 @@ const mutations = {
     Vue.set(state.room, property, value);
   },
 
-
 };
 
 export default {
