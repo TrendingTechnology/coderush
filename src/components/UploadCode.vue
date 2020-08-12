@@ -1,11 +1,10 @@
 <template>
   <div class="wrapper">
-    <p v-if="!language.index">
-      Choose language
-    </p>
-    <p v-else-if="!editorReady">
-      Loading code editor...
-    </p>
+    <div class="warning">
+      <span v-if="!language.index">
+        Choose language <fa class="arrow" :icon="['fas', 'play']" />
+      </span>
+    </div>
     <div class="settings">
       <div v-if="$route.path === '/contribute'" class="">
         <label>Code functionality (or product name)</label>
@@ -14,18 +13,22 @@
       <label>Tab size: {{ tabWidth }}
         <input v-model="tabSize" type="checkbox">
       </label>
+      <p v-if="language.index && !editorReady ">
+        Loading...
+      </p>
     </div>
-    <div class="code" :class="{ready: editorReady}">
-      <codemirror
-        v-model="code"
-        :options="cmOptions"
-        @ready="onCmReady"
-        @input="useCustomCode"
-      />
-    </div>
+    <codemirror
+      ref="codemirror"
+      v-model="code"
+      class="codemirror"
+      :class="{ready: editorReady}"
+      :options="cmOptions"
+      @ready="onCmReady"
+      @input="useCustomCode"
+    />
 
-    <div class="buttons">
-      <button v-if="$route.path === '/contribute'" @click="sendCustomCode">
+    <div v-if="$route.path === '/contribute'" class="buttons">
+      <button @click="sendCustomCode">
         Send
       </button>
     </div>
@@ -51,8 +54,6 @@ export default {
       timeout: 0,
       editorReady: false,
       tabSize: false,
-      cursorScrollMargin: 100,
-      viewportMargin: Infinity,
     };
   },
   computed: {
@@ -66,6 +67,7 @@ export default {
         styleActiveLine: false,
         lineWrapping: true,
         theme: 'material-darker',
+        viewportMargin: Infinity,
       };
     },
     tabWidth() {
@@ -100,6 +102,16 @@ export default {
     onCmReady(cm) {
       console.log('cm ready');
       this.cm = cm;
+      this.fixHeight();
+      window.addEventListener('resize', this.fixHeight);
+    },
+    fixHeight() {
+      if (this.timeout) window.clearTimeout(this.timeout);
+      this.timeout = window.setTimeout(() => {
+        this.rafActive = false;
+        const scroll = this.$refs.codemirror.$el.getElementsByClassName('CodeMirror-scroll')[0];
+        scroll.style.maxHeight = `${this.$refs.codemirror.$el.offsetHeight}px`;
+      }, 100);
     },
     useCustomCode() {
       if (this.timeout) clearTimeout(this.timeout);
@@ -139,33 +151,25 @@ export default {
 </script>
 
 <style lang="sass"  scoped>
-.wrapper
-  padding-top: 2em
-  display: flex
-  justify-content: space-between
-  flex-direction: column
+.warning
+  position: absolute
+  width: 100%
+  text-align: right
+
+  .arrow
+    margin: 0 1em
+
+.codemirror
+  flex-grow: 1
+  opacity: 0
+  margin-top: $gap
+  transition: opacity .5s ease-in
   position: relative
 
+.ready
+  opacity: 1
 
 .buttons
   margin-top: 3em
-
-.code
-  opacity: 0
-  flex-grow: 1
-  margin-top: $gap
-  transition: opacity .5s ease-in
-
-.vue-codemirror
-  position: relative
-  height: 55vh
-  display: flex
-  flex-direction: column
-
-.vue-codemirror >>> .CodeMirror
-  // flex-grow: 1
-
-.code.ready
-  opacity: 1
 
 </style>

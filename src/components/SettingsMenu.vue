@@ -97,8 +97,8 @@ export default {
       ],
       modesList: [
         ['Normal', 'Write down provided source code as quickly as you can.'],
-        ['Hardcore', 'Just don\'t make any mistakes. (coming soon)'],
-        ['CodeRush (100 seconds)', 'See how much code you are able to write in 100 seconds (coming not that soon)'],
+        ['Hardcore', 'Just don\'t make any mistakes.'],
+        ['CodeRush', 'See how much code you are able to write in 100 seconds'],
       ],
     };
   },
@@ -132,11 +132,12 @@ main
   display: flex
   flex-direction: column
   justify-content: flex-start
+  height: 100%
 
-.fold
-  overflow: hidden
-  .themes, .toggles
-    display: none
+// .fold
+//   overflow: hidden
+//   .themes, .toggles
+//     display: none
 
 h2
   margin: $grid-gap 0 $grid-gap $grid-gap
@@ -166,9 +167,9 @@ $purple-gradient-colors: $purple, mix($light-purple, $grid-color, 80)
     justify-content: space-around
     align-items: center
     min-height: 40px
-    background: linear-gradient(to right, $purple-gradient-colors 50%, $grid-color 50% 100%)
-    background-size: 201%
-    background-position: right
+    background: linear-gradient(to right, $purple-gradient-colors 49.8%, $grid-color 49.8%)
+    background-size: 200%
+    background-position: 99.8% 0 // 1px glitch
     transition: background .2s ease-in
 
     .container

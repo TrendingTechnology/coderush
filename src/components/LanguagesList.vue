@@ -107,6 +107,7 @@ export default {
 <style lang="sass" scoped>
 
 $blue-gradient-colors: $light-blue, mix($light-blue, $grid-color, 30)
+
 .search
   margin-bottom: $grid-gap
   border-bottom: $grid-gap solid $grid-color
@@ -152,9 +153,9 @@ input::placeholder
   display: flex
   justify-content: space-around
   align-items: center
-  background: linear-gradient(to right, $blue-gradient-colors 50%, $grid-color 50% 100%)
+  background: linear-gradient(to right, $blue-gradient-colors 49.8%, $grid-color 49.8%)
   background-size: 200%
-  background-position: right
+  background-position: 99.8% 0 // 1px glitch
   transition: background .1s ease-in
 
   &:hover

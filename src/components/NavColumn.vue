@@ -5,20 +5,26 @@
     </button>
 
     <div class="links">
+      <router-link to="/">
+        <fa :icon="['fas', 'play']" />
+        <span class="btn-text">
+          Start
+        </span>
+      </router-link>
       <button class="language" @click="$store.commit('USER_LANGUAGE')">
         <fa v-if="userLanguage" :icon="['fas', 'globe-americas']" />
         <fa v-else :icon="['fas', 'globe-europe']" />
         <span class="btn-text">
-          {{ userLanguage ? 'English Here' : 'Polska wersja (not yet)' }}
+          {{ userLanguage ? 'English Here' : 'Polska wersja' }}
         </span>
       </button>
-      <router-link v-if="this.$route.path !== '/about'" to="/about">
+      <router-link to="/about">
         <fa :icon="['fas', 'info']" />
         <span class="btn-text">
           About
         </span>
       </router-link>
-      <router-link v-if="this.$route.path !== '/contribute'" to="/contribute">
+      <router-link to="/contribute">
         <fa :icon="['fas', 'file-code']" />
         <span class="btn-text">
           Contribute
@@ -39,7 +45,7 @@
 
         <button :disabled="roomName === ''" @click="checkRoom('create')">
           <span class="btn-text">
-            Create room (Beta)
+            Create room
           </span>
         </button>
 
@@ -86,9 +92,11 @@
         <PlayersList v-if="room.connected && $route.path !== '/run'" />
       </div>
     </div>
-    <p class="author">
-      Made with <fa :icon="['fas', 'heart']" class="heart" /> by Łukasz Wielgus
-    </p>
+    <div class="author">
+      <span class="author-text">
+        Made with <fa :icon="['fas', 'heart']" class="heart" /> by <span class="author-name">Łukasz Wielgus</span>
+      </span>
+    </div>
   </nav>
 </template>
 
@@ -205,6 +213,9 @@ export default {
 </script>
 
 <style lang="sass" scoped>
+@mixin padding-left
+  padding: 0 4%
+
 nav
   height: 100%
   padding: 6% 3%
@@ -244,11 +255,11 @@ nav:after
 
 .title
   font-size: 2rem
-  margin-left: .5rem
+  @include padding-left
 
 .links
+  @include padding-left
   margin: 10% 0%
-  padding: 0% 4%
   $line: 1px solid $white
   border-top: $line
   border-bottom: $line
@@ -267,7 +278,7 @@ svg
 
 .room
   flex-grow: 1
-  padding: 0% 4%
+  @include padding-left
 
 .roomNotConnected
   display: flex
@@ -292,6 +303,12 @@ button:disabled
   cursor: not-allowed
 
 .author
-  align-self: flex-end
-  transform: translateX(-1.5em)
+  @include padding-left
+
+  .author-text
+    font-size: .9em
+
+    .author-name
+      white-space: nowrap
+
 </style>

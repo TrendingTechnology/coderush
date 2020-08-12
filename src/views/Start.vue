@@ -1,9 +1,12 @@
 <template>
   <div class="start">
     <main class="middle" :class="{'grow': showEditor}">
-      <SettingsMenu ref="settings" class="settings-menu" :class="{'fold': showEditor}" />
+      <div ref="scroll" class="upload-scroll">
+        <SettingsMenu ref="settings" class="settings-menu" :class="{'fold': showEditor}" />
 
-      <UploadCode v-if="showEditor" class="code-editor" />
+        <UploadCode v-if="showEditor" ref="code" class="code-editor" />
+      </div>
+
 
       <div class="buttons-bottom">
         <label class="button">
@@ -70,16 +73,36 @@ export default {
   methods: {
     useCustomCode(value) {
       console.warn('usecustomcode', value);
-      if (!value) {
-        this.$store.dispatch('deleteCustomCode');
-      } else {
+      if (value) {
         this.$store.commit('USE_CUSTOM_CODE', true);
+
+        this.showEditor = value;
+
+        setTimeout(() => {
+          this.$refs.code.$el.style.display = 'block';
+          this.$refs.code.$refs.codemirror.$el.scrollIntoView({
+            block: 'start',
+            inline: 'nearest',
+            behavior: 'smooth',
+          });
+        }, 30);
+      } else {
+        this.$store.dispatch('deleteCustomCode');
+        this.$refs.settings.$el.scrollIntoView({
+          block: 'start',
+          inline: 'nearest',
+          behavior: 'smooth',
+        });
+
+        setTimeout(() => {
+          this.$refs.code.$el.style.display = 'none';
+        }, 500);
       }
       if (this.room.owner) {
         this.$socket.client.emit('useCustomCode', value);
       }
+
       this.uploadCodeText = value ? 'Close editor' : 'Use your own code';
-      this.showEditor = value;
     },
     run() {
       console.log('run');
@@ -145,14 +168,19 @@ export default {
   margin-right: $gap * 2
   display: flex
   flex-direction: column
-  justify-content: flex-start
+  justify-content: space-between
 
-.settings-menu
-  flex-basis: 0
-  min-height: 8rem
+.upload-scroll
+  flex-grow: 1
+  max-height: 85vh
+  overflow: hidden
+  position: relative
 
-.code-editor
-  flex-grow: 2
+  .code-editor
+    height: 100%
+    display: flex
+    flex-direction: column
+
 
 .buttons-bottom
   display: flex
