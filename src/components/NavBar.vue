@@ -5,42 +5,34 @@
     </button>
 
     <div class="links" :class="{'room-connected': room.connected}">
-      <div class="link">
-        <router-link to="/">
-          <fa :icon="['fas', 'play']" />
-          <span class="btn-text">
-            Start
-          </span>
-        </router-link>
-      </div>
+      <router-link to="/" class="link">
+        <fa :icon="['fas', 'play']" />
+        <span class="btn-text">
+          Start
+        </span>
+      </router-link>
       <div class="line" />
-      <div class="link">
-        <button class="language" @click="$store.commit('USER_LANGUAGE')">
-          <fa v-if="userLanguage" :icon="['fas', 'globe-americas']" />
-          <fa v-else :icon="['fas', 'globe-europe']" />
-          <span class="btn-text">
-            {{ userLanguage ? 'English Here' : 'Polska wersja' }}
-          </span>
-        </button>
-      </div>
+      <button class="link language" @click="$store.commit('USER_LANGUAGE')">
+        <fa v-if="userLanguage" :icon="['fas', 'globe-americas']" />
+        <fa v-else :icon="['fas', 'globe-europe']" />
+        <span class="btn-text">
+          {{ userLanguage ? 'English Here' : 'Polska wersja' }}
+        </span>
+      </button>
       <div class="line" />
-      <div class="link">
-        <router-link to="/about">
-          <fa :icon="['fas', 'info']" />
-          <span class="btn-text">
-            About
-          </span>
-        </router-link>
-      </div>
+      <router-link to="/about" class="link">
+        <fa :icon="['fas', 'info']" />
+        <span class="btn-text">
+          About
+        </span>
+      </router-link>
       <div class="line" />
-      <div class="link">
-        <router-link to="/contribute">
-          <fa :icon="['fas', 'file-code']" />
-          <span class="btn-text">
-            Contribute
-          </span>
-        </router-link>
-      </div>
+      <router-link to="/contribute" class="link">
+        <fa :icon="['fas', 'file-code']" />
+        <span class="btn-text">
+          Contribute
+        </span>
+      </router-link>
     </div>
     <div class="room">
       <div v-if="!room.connected" class="roomNotConnected">
@@ -286,31 +278,38 @@ export default {
 
 <style lang="sass" scoped>
 @mixin padding-left
-  padding: 0 4%
+  padding-left: 1.2rem
+  padding-right: 1.2rem
 
-@mixin small-btn($selector)
-  #{$selector}
-    text-align: center
-    width: 40%
-    padding: $grid-gap
-    border-left: 1px solid $grey
-    transition: background-color .1s ease-in-out
+@mixin mouse-effect
+  transition: background-color .15s ease-in-out
 
-  #{$selector}:hover
+  &:hover
     background-color: rgba($white, .1)
 
-  #{$selector}:active
+  &:active
     background-color: rgba($white, .2)
 
+@mixin small-btn
+  text-align: center
+  width: 40%
+  padding: $grid-gap
+  border-left: 1px solid $grey
+  @include mouse-effect
+
 .title
-  margin-top: 4% // 10-6
+  // margin-top: 4% // 10-6
   font-size: 2rem
   font-weight: 600
+  padding: 1.1rem 0
+  width: 100%
+  transition: opacity $nav-trans-dur $nav-trans-timing $nav-trans-dur, background-color .15s ease-in-out
   @include padding-left
+  @include mouse-effect
 
 nav
   height: 100%
-  padding: 6% 3%
+  padding: 6% 0
   display: flex
   flex-direction: column
   justify-content: flex-start
@@ -342,13 +341,11 @@ nav:after
     opacity: 0
     transition-delay: $nav-trans-dur
 
-.btn-text, .title, .room, .author
+.btn-text, .room, .author
   transition: opacity $nav-trans-dur $nav-trans-timing $nav-trans-dur
 
 .links
-  @include padding-left
-  margin: 10% -3%
-  padding-left: 1em
+  margin: 6% 0 10% 0
   $line: 1px solid $grey
   border-top: $line
   border-bottom: $line
@@ -357,6 +354,14 @@ nav:after
   flex-direction: column
   justify-content: space-evenly
   transition: min-height .5s ease-in-out
+
+  .link
+    display: block
+    width: 100%
+    padding: 1.1rem
+    @include padding-left
+    @include mouse-effect
+
 
   .line
     width: 100%
@@ -391,7 +396,8 @@ svg
   flex-direction: column
   justify-content: space-between
 
-  @include small-btn("button")
+  button
+    @include small-btn
 
   .roomName, .playerName
     display: flex
@@ -417,7 +423,8 @@ svg
     input
       flex-grow: 1
 
-    @include small-btn(".close-btn")
+    .close-btn
+      @include small-btn
 
   .roomNameContainer
     display: flex
