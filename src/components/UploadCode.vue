@@ -10,9 +10,23 @@
         <label>Code functionality (or product name)</label>
         <input v-model="name" type="text">
       </div>
-      <label>Tab size: {{ tabWidth }}
-        <input v-model="tabSize" type="checkbox">
-      </label>
+      <div class="tab-settings">
+        <span class="tab-text">Tab size:</span>
+
+        <label
+          v-for="(size) in tabSizes"
+          :key="size"
+          :class="{'selected': size === selectedSize}"
+          class="tab-size-option"
+        >
+          <span>{{ size }}</span>
+          <input
+            v-model="selectedSize"
+            :value="size"
+            type="radio"
+          >
+        </label>
+      </div>
       <p v-if="language.index && !editorReady ">
         Loading...
       </p>
@@ -53,14 +67,15 @@ export default {
       name: '',
       timeout: 0,
       editorReady: false,
-      tabSize: false,
+      tabSizes: [2, 4, 8],
+      selectedSize: 2,
     };
   },
   computed: {
     ...mapGetters(['room', 'languagesList', 'language']),
     cmOptions() {
       return {
-        tabSize: this.tabWidth,
+        tabSize: this.selectedSize,
         lineNumbers: true,
         mathBrackets: true,
         styleSelectedText: true,
@@ -69,9 +84,6 @@ export default {
         theme: 'material-darker',
         viewportMargin: Infinity,
       };
-    },
-    tabWidth() {
-      return this.tabSize ? '4' : '2';
     },
     numberOfLines() {
       return this.code.split(/\r\n|\r|\n/).length;
@@ -110,6 +122,7 @@ export default {
       this.timeout = window.setTimeout(() => {
         this.rafActive = false;
         const scroll = this.$refs.codemirror.$el.getElementsByClassName('CodeMirror-scroll')[0];
+        console.log(this.$refs.codemirror.$el.offsetHeight);
         scroll.style.maxHeight = `${this.$refs.codemirror.$el.offsetHeight}px`;
       }, 100);
     },
@@ -118,8 +131,9 @@ export default {
       this.timeout = setTimeout(() => {
         this.$store.commit('SET_CUSTOM_CODE', {
           text: this.code,
-          tabSize: this.tabWidth,
+          tabSize: this.selectedSize,
           lines: this.numberOfLines,
+          showEditor: true,
         });
       }, 600);
     },
@@ -130,7 +144,7 @@ export default {
           languageIndex: this.languageIndex,
           name: this.name ? this.name : Math.floor(Math.random() * 10000),
           ext: this.currentLanguage.ext,
-          tabSize: this.tabWidth,
+          tabSize: this.selectedSize,
           numberOfLines: this.numberOfLines,
         };
         const url = `${window.location.origin}/upload`;
@@ -151,13 +165,36 @@ export default {
 </script>
 
 <style lang="sass"  scoped>
+.tab-settings
+  height: 40px
+  .tab-size-option
+    display: inline-flex
+    flex-direction: column
+    justify-content: space-around
+    align-items: center
+    width: 3em
+    height: 3em
+    margin-left: 1em
+    cursor: pointer
+    box-shadow: 0px 0px 2px 2px rgba(black, .1)
+    background: linear-gradient(to right, $purple-gradient-colors 49.8%, $grid-color 49.8%)
+    background-size: 200%
+    background-position: 99.8% 0 // 1px glitch
+    transition: background .2s ease-in
+  .selected
+    transition: background .4s ease-in-out
+    background-position: left
+
 .warning
+  pointer-events: none
+  height: 40px
+  line-height: 40px
   position: absolute
   width: 100%
   text-align: right
 
   .arrow
-    margin: 0 1em
+    margin-left: 1em
 
 .codemirror
   flex-grow: 1

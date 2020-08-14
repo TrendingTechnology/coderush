@@ -1,7 +1,7 @@
 <template>
   <div id="app" ref="app">
     <template v-if="!tooSmall">
-      <aside ref="navLeft" class="nav-left" :class="[{thin: isPlaying }]">
+      <aside ref="navLeft" class="nav-left" :class="{thin: isPlaying, wide: room.connected }">
         <NavColumn :class="[{thin: isPlaying }]" />
       </aside>
       <main>
@@ -84,14 +84,16 @@ body
   justify-content: space-between
 
 aside
-  width: 15vw
-  min-width: min-content
+  min-width: 14vw
   margin-right: $gap * 2
   padding: $grid-gap
   flex-shrink: 0
   background: transparent radial-gradient(250px at var(--mouse-x) var(--mouse-y), rgba($white, 0.2) 10%, transparent 90%) no-repeat 0 0
   @include shadow()
-  transition: transform $nav-trans-dur $nav-trans-timing 0s
+  transition: transform $nav-trans-dur $nav-trans-timing 0s, min-width .5s ease-in-out
+
+aside.wide:not(.thin)
+  min-width: 22vw
 
 aside.thin
   transition-delay: $nav-trans-dur

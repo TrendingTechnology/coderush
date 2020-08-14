@@ -2,13 +2,12 @@ module.exports = {
   css: {
     loaderOptions: {
       sass: {
-        prependData: `
-          @import "@/styles/global.sass"
-        `,
+        prependData: '\n          @import "@/styles/global.sass"\n        ',
         sassOptions: {
-          indentedSyntax: true,
-        },
-      },
+          indentedSyntax: true
+        }
+      }
     },
+    sourceMap: true
   },
 };

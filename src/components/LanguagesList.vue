@@ -6,7 +6,14 @@
         type="text"
         placeholder="Search"
         class="searchInput"
+        maxlength="12"
       >
+      <div>
+        <span v-if="searchText && filteredList.length === languagesList.length" class="nothing-found-text">(nothing found)</span>
+        <button v-if="searchText" class="clear-btn" @click="clear">
+          Clear
+        </button>
+      </div>
     </div>
     <div ref="languagesList" class="languages list">
       <button
@@ -84,6 +91,9 @@ export default {
   //   }
   // },
   methods: {
+    clear() {
+      this.searchText = '';
+    },
     selectRandom() {
       const index = Math.floor(Math.random() * this.filteredList.length);
       if (this.filteredList[index].index === this.language.index && this.filteredList.length > 1) {
@@ -106,19 +116,34 @@ export default {
 
 <style lang="sass" scoped>
 
-$blue-gradient-colors: $light-blue, mix($light-blue, $grid-color, 30)
-
 .search
+  display: flex
+  justify-content: space-between
+  position: relative
   margin-bottom: $grid-gap
   border-bottom: $grid-gap solid $grid-color
   width: 100%
+  height: 40px
   padding: 2 * $grid-gap
 
   &:focus-within
     border-image: linear-gradient(to right, $light-blue, $grid-color 90%) 1
 
-input::placeholder
-  color: $grey
+  input
+    max-width: 40%
+
+  input::placeholder, .nothing-found-text
+    color: $grey
+
+  div
+    overflow: hidden
+
+  .clear-btn
+    margin-left: 1em
+    background: $navy-grey
+    padding: $grid-gap 4 * $grid-gap
+    box-shadow: 0px 0px 2px 2px rgba(black, .1)
+    height: 100%
 
 .list
   flex-grow: 1

@@ -1,15 +1,16 @@
 <template>
   <div class="start">
-    <main class="middle" :class="{'grow': showEditor}">
+    <main class="middle">
       <div ref="scroll" class="upload-scroll">
-        <SettingsMenu ref="settings" class="settings-menu" :class="{'fold': showEditor}" />
-
-        <UploadCode v-if="showEditor" ref="code" class="code-editor" />
+        <SettingsMenu ref="settings" class="settings-menu" />
+        <keep-alive>
+          <UploadCode v-if="showEditor" ref="code" class="code-editor" />
+        </keep-alive>
       </div>
 
 
       <div class="buttons-bottom">
-        <label class="button">
+        <label class="button show-editor-btn">
           <span>{{ uploadCodeText }}</span>
           <input
             :checked="customCode.showEditor"
@@ -37,7 +38,7 @@
         </button>
       </div>
     </main>
-    <LanguagesList ref="languagesList" :class="{'shrink': showEditor}" class="languages-list" />
+    <LanguagesList ref="languagesList" class="languages-list" />
   </div>
 </template>
 
@@ -70,16 +71,23 @@ export default {
       return this.room.players.length / notReadyCount < 0.4;
     },
   },
+  activated() {
+    if (this.customCode.showEditor) {
+      this.$refs.code.$refs.codemirror.$el.scrollIntoView({
+        block: 'start',
+        inline: 'nearest',
+      });
+    }
+  },
   methods: {
     useCustomCode(value) {
       console.warn('usecustomcode', value);
       if (value) {
+        this.showEditor = value;
         this.$store.commit('USE_CUSTOM_CODE', true);
 
-        this.showEditor = value;
-
         setTimeout(() => {
-          this.$refs.code.$el.style.display = 'block';
+          // this.$refs.code.$el.style.display = 'flex';
           this.$refs.code.$refs.codemirror.$el.scrollIntoView({
             block: 'start',
             inline: 'nearest',
@@ -95,12 +103,15 @@ export default {
         });
 
         setTimeout(() => {
-          this.$refs.code.$el.style.display = 'none';
+          this.showEditor = value;
         }, 500);
       }
       if (this.room.owner) {
         this.$socket.client.emit('useCustomCode', value);
       }
+
+
+
 
       this.uploadCodeText = value ? 'Close editor' : 'Use your own code';
     },
@@ -187,8 +198,6 @@ export default {
   justify-content: space-between
   align-items: flex-end
   margin-top: $gap
-  padding: $grid-gap
-  padding-bottom: 0
 
 .button
   display: flex
@@ -201,13 +210,15 @@ export default {
   margin-right: $gap
   cursor: pointer
 
+.button
+  flex-grow: 1
+  max-width: 250px
+
 .start-btn
   background: linear-gradient(to right, $purple, $light-purple 50%, $grid-color 50% 100%)
   background-size: 200%
   background-position: right
-  flex-grow: 1
   margin-right: 0
-  max-width: 250px
   transition: background .2s ease-in
 
   &:hover
@@ -226,11 +237,5 @@ export default {
   height: calc(100vh - 2 * #{$gap})
   display: flex
   flex-direction: column
-  transition: flex-grow .5s ease-out
 
-.shrink
-  flex-grow: 1
-
-.grow
-  max-width: 70%
 </style>

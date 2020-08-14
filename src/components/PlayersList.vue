@@ -1,7 +1,9 @@
 <template>
   <div>
-    <h3>{{ room.connected ? 'Connected' : 'Disconnected' }} -- Pokój {{ room.name }}</h3>
-    <h4>Players count: {{ Object.keys(room.players).length === 1 ? 'Only you' : Object.keys(room.players).length }}</h4>
+    <!-- <h3>{{ room.connected ? 'Connected' : 'Disconnected' }} -- Room {{ room.name }}</h3> -->
+    <h4 class="players-count">
+      {{ Object.keys(room.players).length === 1 ? '1 player' : Object.keys(room.players).length + ' players' }}
+    </h4>
     <ol>
       <li v-for="player in sortedPlayers" :key="player.name">
         <span :class="{ owner: player.owner, me: player.name === room.myName && !room.owner, winner: player.name === room.winner }">{{ player.name }}{{ player.name === room.myName ? ' (You)' : '' }} {{ player.ready && player.connected ? '✔' : '' }} {{ player.connected ? '🌐' : '❎' }}</span>
@@ -41,6 +43,9 @@ export default {
 </script>
 
 <style lang="sass" scoped>
+.players-count
+  font-weight: normal
+  margin: 1em 0
 .owner
   color: greenyellow
 

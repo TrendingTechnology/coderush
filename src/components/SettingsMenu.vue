@@ -8,13 +8,13 @@
       <label
         v-for="(mode, index) in modesList"
         :key="mode[0]"
-        :class="{'selected': index+1 === selectedMode, 'small': customCode.showEditor}"
+        :class="{'selected': index+1 === selectedMode}"
         class="mode"
       >
-        <div class="container">
-          <span>{{ mode[0] }}</span>
-          <span class="modeDesc">{{ mode[1] }}</span>
-        </div>
+        <!-- <div class="container"> -->
+        <h4>{{ mode[0] }}</h4>
+        <p class="modeDesc">{{ mode[1] }}</p>
+        <!-- </div> -->
 
         <input
           v-model="selectedMode"
@@ -34,7 +34,7 @@
         :class="{'selected': theme[0] === selectedTheme}"
         class="theme"
       >
-        <span>{{ theme[1] }}</span>
+        <h4>{{ theme[1] }}</h4>
         <input
           v-model="selectedTheme"
           :value="theme[0]"
@@ -134,11 +134,6 @@ main
   justify-content: flex-start
   height: 100%
 
-// .fold
-//   overflow: hidden
-//   .themes, .toggles
-//     display: none
-
 h2
   margin: $grid-gap 0 $grid-gap $grid-gap
 
@@ -146,8 +141,6 @@ h2
   text-align: right
   color: $grey
   margin: 1em 2 * $grid-gap $grid-gap 0
-
-$purple-gradient-colors: $purple, mix($light-purple, $grid-color, 80)
 
 .list
   padding: $grid-gap
@@ -164,58 +157,61 @@ $purple-gradient-colors: $purple, mix($light-purple, $grid-color, 80)
     box-shadow: 0px 0px 2px 2px rgba(black, .1)
     display: flex
     flex-direction: column
-    justify-content: space-around
     align-items: center
     min-height: 40px
+    padding: $grid-gap
     background: linear-gradient(to right, $purple-gradient-colors 49.8%, $grid-color 49.8%)
     background-size: 200%
     background-position: 99.8% 0 // 1px glitch
     transition: background .2s ease-in
 
-    .container
-      margin-top: 2em
-      width: 12vw
-      display: flex
-      flex-direction: column
-      align-items: center
-      justify-content: space-around
-
-    span
-      margin: 2em 0.5em
-
-
-    .modeDesc
-      margin: 0
-      color: #bbb
-      font-size: 0.9em
-      width: 80%
-      text-align: center
-      display: block
-
+    h4
+      font-weight: normal
 
   .selected
     transition: background .4s ease-in-out
     background-position: left
 
-.small
-  .container
-    margin-top: 0 !important
-
 .modes
   flex-shrink: 2
   flex-grow: 2
   max-height: 250px
-  grid-template-columns: repeat(3, minmax(max-content, 1fr))
+  grid-template-columns: repeat(3, 1fr)
+
+  label
+    padding: 30% 0.5em 0.5em
+
+    .modeDesc
+      margin: 20% 0
+      color: #bbb
+      font-size: 0.9em
+      width: 80%
+      text-align: center
+
 
 .themes
   grid-template-columns: repeat(2, 1fr)
   grid-template-rows: 50px 50px
 
+  label
+    justify-content: space-around
+
 .toggles
+  flex-grow: 1
   width: 100%
   position: relative
   padding: 0 3 * $grid-gap 0 2 * $grid-gap
-  overflow: hidden // omg zabij sie
+  overflow-y: auto
+
+  &::-webkit-scrollbar
+    width: $gap / 2
+
+  &::-webkit-scrollbar-thumb
+    background: linear-gradient(to top, $purple-gradient-colors)
+
+  &::-webkit-scrollbar-track
+    background-color: $grid-color
+
 
   label
     display: flex
@@ -261,7 +257,7 @@ $purple-gradient-colors: $purple, mix($light-purple, $grid-color, 80)
 @media (max-height: 700px)
   .toggles
     label
-      margin-top: 1em
+      margin-top: 1.5em
   .list
     margin-bottom: 1em
 

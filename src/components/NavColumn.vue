@@ -4,91 +4,143 @@
       CodeRush
     </button>
 
-    <div class="links">
-      <router-link to="/">
-        <fa :icon="['fas', 'play']" />
-        <span class="btn-text">
-          Start
-        </span>
-      </router-link>
-      <button class="language" @click="$store.commit('USER_LANGUAGE')">
-        <fa v-if="userLanguage" :icon="['fas', 'globe-americas']" />
-        <fa v-else :icon="['fas', 'globe-europe']" />
-        <span class="btn-text">
-          {{ userLanguage ? 'English Here' : 'Polska wersja' }}
-        </span>
-      </button>
-      <router-link to="/about">
-        <fa :icon="['fas', 'info']" />
-        <span class="btn-text">
-          About
-        </span>
-      </router-link>
-      <router-link to="/contribute">
-        <fa :icon="['fas', 'file-code']" />
-        <span class="btn-text">
-          Contribute
-        </span>
-      </router-link>
+    <div class="links" :class="{'room-connected': room.connected}">
+      <div class="link">
+        <router-link to="/">
+          <fa :icon="['fas', 'play']" />
+          <span class="btn-text">
+            Start
+          </span>
+        </router-link>
+      </div>
+      <div class="line" />
+      <div class="link">
+        <button class="language" @click="$store.commit('USER_LANGUAGE')">
+          <fa v-if="userLanguage" :icon="['fas', 'globe-americas']" />
+          <fa v-else :icon="['fas', 'globe-europe']" />
+          <span class="btn-text">
+            {{ userLanguage ? 'English Here' : 'Polska wersja' }}
+          </span>
+        </button>
+      </div>
+      <div class="line" />
+      <div class="link">
+        <router-link to="/about">
+          <fa :icon="['fas', 'info']" />
+          <span class="btn-text">
+            About
+          </span>
+        </router-link>
+      </div>
+      <div class="line" />
+      <div class="link">
+        <router-link to="/contribute">
+          <fa :icon="['fas', 'file-code']" />
+          <span class="btn-text">
+            Contribute
+          </span>
+        </router-link>
+      </div>
     </div>
     <div class="room">
       <div v-if="!room.connected" class="roomNotConnected">
+        <p class="room-text">
+          Play with your friends:
+        </p>
         <div class="roomName">
           <fa :icon="['fas', 'server']" />
           <input
             v-model="roomName"
-            min-length="3"
+            maxlength="14"
             type="text"
             placeholder="Room name"
+            @input="resetInfoMsg"
           >
         </div>
 
-        <button :disabled="roomName === ''" @click="checkRoom('create')">
-          <span class="btn-text">
-            Create room
-          </span>
-        </button>
-
-        <button :disabled="roomName === ''" @click="checkRoom('join')">
-          <span class="btn-text">
-            Join room
-          </span>
-        </button>
-
-        <div v-if="askForPlayerName" class="playerName">
-          <input v-model="playerName" type="text" placeholder="Nick">          <button v-if="action === 'create'" :disabled="!playerName" @click="createRoom">
+        <div v-if="roomName" class="buttons">
+          <button :disabled="roomName === ''" @click="checkRoom('create')">
             <span class="btn-text">
               Create
             </span>
           </button>
-          <button v-else :disabled="playerName === ''" @click="checkPlayerName">
+
+          <button :disabled="roomName === ''" @click="checkRoom('join')">
             <span class="btn-text">
-              Join
+              Connect
             </span>
           </button>
-          <div v-if="room.owner" class="popUp">
-            <p>
-              You have succesfully created {{ roomName }} room.
-              For others to join, send them that link:
-            </p>
-            <fa :icon="['fas', 'copy']" />
-            <input type="text" disabled :value="`${origin}/join/${roomName}`">
+        </div>
+
+
+
+        <div v-if="askForPlayerName" class="nick-actions">
+          <div class="playerName">
+            <fa :icon="['fas', 'user']" />
+            <input
+              v-model="playerName"
+              maxlength="14"
+              type="text"
+              placeholder="Nick"
+              @input="resetInfoMsg"
+            >
           </div>
-          <button @click="askForPlayerName = false">
+          <div class="buttons">
+            <button v-if="action === 'create'" :disabled="!playerName" @click="createRoom">
+              <span class="btn-text">
+                Ok
+              </span>
+            </button>
+            <button v-else :disabled="playerName === ''" @click="checkPlayerName">
+              <span class="btn-text">
+                Join room
+              </span>
+            </button>
+            <button @click="disconnect()">
+              <span class="btn-text">
+                Close
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <p v-if="roomInfoMsg" class="info">
+          {{ roomInfoMsg }}
+        </p>
+      </div>
+      <div v-else class="roomConnected">
+        <div class="roomNameContainer">
+          <h2>{{ room.name }}</h2>
+          <button class="disconnect-btn" @click="disconnect(true)">
+            <fa :icon="['fas', 'sign-out-alt']" size="lg" />
+            <!-- <span class="btn-text">
+              Disconnect
+            </span> -->
+          </button>
+        </div>
+        <div v-if="room.owner && showRoomLink" class="popUp">
+          <p>
+            Share this link with other players:
+          </p>
+
+          <div class="shareLink">
+            <button class="copy-btn" @click="copy">
+              <fa :icon="['fas', 'copy']" />
+            </button>
+            <input
+              ref="shareLink"
+              type="text"
+              readonly
+              :value="`${origin}/join/${roomName}`"
+            >
+          </div>
+          <button class="close-btn" @click="showRoomLink = false">
             <span class="btn-text">
               Close
             </span>
           </button>
         </div>
-      </div>
-      <div v-else class="roomConnected">
-        <h2>{{ room.name }}</h2>
-        <button @click="disconnect">
-          <fa :icon="['fas', 'sign-out-alt']" />
-          <span class="btn-text">
-            Disconnect
-          </span>
-        </button>
+
         <PlayersList v-if="room.connected && $route.path !== '/run'" />
       </div>
     </div>
@@ -114,7 +166,9 @@ export default {
     return {
       roomName: '',
       playerName: '',
+      roomInfoMsg: '',
       showRoomCreator: false,
+      showRoomLink: true,
       askForPlayerName: false,
       origin: window.location.origin,
     };
@@ -124,6 +178,7 @@ export default {
   },
   sockets: {
     connect() {
+      this.resetInfoMsg();
       console.warn('connected');
     },
     room_created() {
@@ -143,6 +198,7 @@ export default {
     room_exist() {
       if (this.action === 'create') {
         console.error('ROOM ALREADY EXIST');
+        this.roomInfoMsg = `Room "${this.roomName}" already exists.`;
         this.disconnect();
       } else {
         this.askForPlayerName = true;
@@ -153,6 +209,7 @@ export default {
         this.askForPlayerName = true;
       } else {
         console.error('ROOM DONT EXIST');
+        this.roomInfoMsg = `Room "${this.roomName}" doesn't exist.`;
         this.disconnect();
       }
     },
@@ -162,6 +219,7 @@ export default {
     },
     player_name_taken() {
       console.error('PLAYER NAME TAKEN');
+      this.roomInfoMsg = `Nick "${this.playerName}" is already taken.`;
     },
   },
   mounted() {
@@ -201,12 +259,26 @@ export default {
       this.$socket.client.emit('joinRoom');
       this.askForPlayerName = false;
     },
-    disconnect() {
+    disconnect(action = false) {
       this.$socket.client.close();
       this.$store.commit('SET_ROOM_PROPERTY', ['connected', false]);
       this.$store.commit('SET_ROOM_PROPERTY', ['name', '']);
       this.$store.commit('SET_ROOM_PROPERTY', ['owner', false]);
-      this.roomName = '';
+      if (action) {
+        this.askForPlayerName = false;
+        this.roomName = '';
+      } else {
+        this.askForPlayerName = false;
+      }
+    },
+    copy() {
+      console.log(this.$refs.shareLink);
+      this.$refs.shareLink.select();
+      document.execCommand('copy');
+      console.log('copied');
+    },
+    resetInfoMsg() {
+      this.roomInfoMsg = '';
     },
   },
 };
@@ -215,6 +287,26 @@ export default {
 <style lang="sass" scoped>
 @mixin padding-left
   padding: 0 4%
+
+@mixin small-btn($selector)
+  #{$selector}
+    text-align: center
+    width: 40%
+    padding: $grid-gap
+    border-left: 1px solid $grey
+    transition: background-color .1s ease-in-out
+
+  #{$selector}:hover
+    background-color: rgba($white, .1)
+
+  #{$selector}:active
+    background-color: rgba($white, .2)
+
+.title
+  margin-top: 4% // 10-6
+  font-size: 2rem
+  font-weight: 600
+  @include padding-left
 
 nav
   height: 100%
@@ -253,23 +345,28 @@ nav:after
 .btn-text, .title, .room, .author
   transition: opacity $nav-trans-dur $nav-trans-timing $nav-trans-dur
 
-.title
-  font-size: 2rem
-  @include padding-left
-
 .links
   @include padding-left
-  margin: 10% 0%
-  $line: 1px solid $white
+  margin: 10% -3%
+  padding-left: 1em
+  $line: 1px solid $grey
   border-top: $line
   border-bottom: $line
   min-height: 40%
   display: flex
   flex-direction: column
-  justify-content: space-around
+  justify-content: space-evenly
+  transition: min-height .5s ease-in-out
+
+  .line
+    width: 100%
+    // border-bottom: 1px solid $grey
 
   .btn-text
     margin-left: 1em
+
+.links.room-connected
+  min-height: 25%
 
 svg
   display: inline-block
@@ -280,24 +377,62 @@ svg
   flex-grow: 1
   @include padding-left
 
+  svg
+    margin-top: $grid-gap
+
+  input
+    margin-left: 1em
+    border-bottom: 1px solid $grey
+    overflow: hidden
+    padding: $grid-gap
+
 .roomNotConnected
   display: flex
   flex-direction: column
   justify-content: space-between
 
-  .roomName
+  @include small-btn("button")
+
+  .roomName, .playerName
+    display: flex
+    justify-content: space-between
+    margin: 1em 0
+
+  .buttons
     display: flex
     justify-content: space-between
 
+
+  .info
+    margin-top: 1em
+
+.roomConnected
+  .popUp
+    margin-bottom: 2em
+    .shareLink
+      display: flex
+      justify-content: space-between
+      margin: 1em 0
+
     input
-      margin-left: 1em
+      flex-grow: 1
+
+    @include small-btn(".close-btn")
+
+  .roomNameContainer
+    display: flex
+    justify-content: space-between
+    align-items: center
+    margin-bottom: 1em
+
+    svg
+      margin-bottom: $grid-gap
+
+  .disconnect-btn
+
 
 input::placeholder
     color: $grey
-
-button
-  margin: 4% 0
-  display: block
 
 button:disabled
   cursor: not-allowed
