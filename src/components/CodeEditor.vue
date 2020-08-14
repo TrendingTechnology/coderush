@@ -442,120 +442,92 @@ export default {
 .container
   position: relative
 
-
 .info h4
   color: lightgray
 
+.code .ready
+  opacity: 1
 
 .code
   opacity: 0
   transition: opacity .5s ease-in
-  position: relative
-
-
-.ready
-  opacity: 1
-
-.code
-  margin-top: 10px
+    margin-top: 10px
   // pointer-events: none !important
   position: relative
+  ::v-deep
+    .CodeMirror-line
+      line-break: anywhere !important
+
+    .mark
+      background-color: rgba(255, 255, 255, .3)
+
+    .CodeMirror
+      // height: 70vh !important
+      // height: 500px !important
+      .CodeMirror-scroll
+        padding-right: .7em
+        &::-webkit-scrollbar
+          display: none
+
+      .CodeMirror-vscrollbar
+        &::-webkit-scrollbar
+          width: $gap / 2
+        &::-webkit-scrollbar-thumb
+          background: linear-gradient(to top, $purple-gradient-colors)
+        &::-webkit-scrollbar-track
+          background-color: $grid-color
 
 
-.code ::v-deep .CodeMirror-line
-  line-break: anywhere !important
-
-
-.code ::v-deep .CodeMirror
-  // height: 70vh !important
-  height: 500px !important
-
-
-.completed ::v-deep .CodeMirror
-  height: 100% !important
-
-
-.completed
-    overflow-y: auto
-    max-height: 70vh
-
-#editor
-  position: absolute
-  width: 90%
-  top: 0
-
-
-#editor ::v-deep .CodeMirror-linenumber
-  opacity: 0
+#editor ::v-deep
+  .underScore
+    display: inline-block
+    font-size: 0.9em
+    transform: translateY(4px) !important
+    filter: saturate(70%)
+  .underScoreHidden
+    opacity: 0
+  .CodeMirror-linenumber
+    opacity: 0
 
 
 #original ::v-deep .CodeMirror-line
   z-index: 0
   opacity: 0.7
-  will-change: filter
   filter: saturate(80%)
   transition: opacity 2s, filter 2s
 
 
-.heatMap #original
-  opacity: 1
+.completed
+  #original ::v-deep .CodeMirror-code span
+    color: transparent !important
 
-
-.heatMap #original
-  // filter: blur(9px)
-
-
-.heatMap #editor ::v-deep .CodeMirror-linenumber
-  opacity: 1
-
-
-.completed #original ::v-deep .CodeMirror-code span
-  color: transparent !important
-
-
-.completed ::v-deep .mark
+  ::v-deep .mark
   opacity: 0
 
 
-#editor ::v-deep .CodeMirror,#editor ::v-deep .CodeMirror-gutters
-  background: transparent
+.heatMap
+  #original
+    opacity: 1
+    ::v-deep
+      .CodeMirror-line
+        opacity: 1
+      .CodeMirror-linenumber
+        opacity: 0
 
+  #editor ::v-deep
+    .CodeMirror, CodeMirror-gutters
+      background: transparent
+    .CodeMirror-linenumber
+      opacity: 1
 
-.code ::v-deep .mark
-  background-color: rgba(255, 255, 255, .3)
+  ::v-deep .mark
+    // background-color: rgba(11, 192, 238, 0.8) !important
+    background-color: var(--accent1)
+    outline: 0.2em solid var(--accent1)
+    // background-color: rgba(255, 255, 255, 0.0)
+    // outline-offset: 1px
+    // outline: 8px solid rgba(255, 255, 255, 1)
+    opacity: 1
+    transition: opacity .7s ease-out
 
-
-.heatMap ::v-deep .mark
-  // background-color: rgba(11, 192, 238, 0.8) !important
-  background-color: var(--accent1)
-  outline: 0.2em solid var(--accent1)
-  // background-color: rgba(255, 255, 255, 0.0)
-  // outline-offset: 1px
-  // outline: 8px solid rgba(255, 255, 255, 1)
-  opacity: 1
-  transition: opacity .7s ease-out
-
-
-.heatMap #original ::v-deep .CodeMirror-linenumber
-  opacity: 0
-
-
-.heatMap #original ::v-deep .CodeMirror-line
-  opacity: 1
-
-
-#editor ::v-deep .underScoreHidden
-  opacity: 0
-
-
-#editor ::v-deep .underScore
-  display: inline-block
-  font-size: 0.9em
-  transform: translateY(4px) !important
-  filter: saturate(70%)
-
-
-.reset
-  margin-right: 1em
-  margin-top: .5em
 </style>

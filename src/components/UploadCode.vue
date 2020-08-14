@@ -124,6 +124,7 @@ export default {
         const scroll = this.$refs.codemirror.$el.getElementsByClassName('CodeMirror-scroll')[0];
         console.log(this.$refs.codemirror.$el.offsetHeight);
         scroll.style.maxHeight = `${this.$refs.codemirror.$el.offsetHeight}px`;
+        scroll.style.width = `${this.$refs.codemirror.$el.offsetWidth}px`;
       }, 100);
     },
     useCustomCode() {
@@ -164,7 +165,7 @@ export default {
 };
 </script>
 
-<style lang="sass"  scoped>
+<style lang="sass" scoped>
 .tab-settings
   height: 40px
   .tab-size-option
@@ -199,9 +200,22 @@ export default {
 .codemirror
   flex-grow: 1
   opacity: 0
+  // width: 100%
   margin-top: $gap
   transition: opacity .5s ease-in
   position: relative
+
+  ::v-deep .CodeMirror-scroll
+    &::-webkit-scrollbar
+      display: none
+
+  ::v-deep .CodeMirror-vscrollbar
+    &::-webkit-scrollbar
+      width: $gap / 2
+    &::-webkit-scrollbar-thumb
+      background: linear-gradient(to top, $purple-gradient-colors)
+    &::-webkit-scrollbar-track
+      background-color: $grid-color
 
 .ready
   opacity: 1

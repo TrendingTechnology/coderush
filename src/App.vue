@@ -84,7 +84,7 @@ body
   justify-content: space-between
 
 aside
-  min-width: 14vw
+  min-width: $nav-size
   margin-right: $gap * 2
   padding: $grid-gap
   flex-shrink: 0
@@ -97,7 +97,7 @@ aside.wide:not(.thin)
 
 aside.thin
   transition-delay: $nav-trans-dur
-  transform: translateX(-$nav-move)
+  transform: translateX(calc(-100% + #{$nav-move}))
 
 main
   flex-grow: 1

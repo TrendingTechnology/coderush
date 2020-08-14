@@ -6,7 +6,7 @@
 
     <div class="links" :class="{'room-connected': room.connected}">
       <router-link to="/" class="link">
-        <fa :icon="['fas', 'play']" />
+        <fa :icon="['fas', 'play']" :class="{flip: $route.path === '/run'}" />
         <span class="btn-text">
           Start
         </span>
@@ -331,12 +331,15 @@ nav:after
   backdrop-filter: hue-rotate(10deg) brightness(80%)
 
 .thin
+  $translate: translateX(calc(#{$nav-size} - 2.5em - #{$nav-move} / 2))
   .btn-text, .title, .room
     transition-delay: 0s
     opacity: 0
   svg:not(.heart)
     transition-delay: $nav-trans-dur
-    transform: translateX($nav-move + 1)
+    transform: $translate
+  .flip
+    transform: $translate rotate(180deg) !important
   .author
     opacity: 0
     transition-delay: $nav-trans-dur
@@ -354,6 +357,7 @@ nav:after
   flex-direction: column
   justify-content: space-evenly
   transition: min-height .5s ease-in-out
+
 
   .link
     display: block

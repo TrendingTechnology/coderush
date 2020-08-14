@@ -114,7 +114,7 @@ export default {
 
 
 
-      this.uploadCodeText = value ? 'Close editor' : 'Use your own code';
+      this.uploadCodeText = value ? 'Cancel' : 'Use your own code';
     },
     run() {
       console.log('run');
