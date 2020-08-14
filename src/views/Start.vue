@@ -19,12 +19,13 @@
             @input="useCustomCode($event.target.checked)"
           >
         </label>
-        <label v-if="room.connected" class="button ready">
+        <label v-if="room.connected" class="button ready-btn" :class="{ highlight: isReady }">
           <span>Ready</span>
           <input
             v-model="isReady"
             type="checkbox"
             :disabled="!language.name && room.owner"
+
             @input="ready($event.target.checked)"
           >
         </label>
@@ -169,7 +170,7 @@ export default {
   display: flex
   justify-content: flex-end
   flex-basis: 0
-  max-height: calc(100vh - 2 * #{$gap})
+  height: calc(100vh - 2 * #{$gap})
 
 .middle
   position: relative
@@ -198,6 +199,7 @@ export default {
   justify-content: space-between
   align-items: flex-end
   margin-top: $gap
+  margin-bottom: $grid-gap
 
 .button
   display: flex
@@ -214,16 +216,15 @@ export default {
   flex-grow: 1
   max-width: 250px
 
-.start-btn
+.start-btn, .ready-btn
   background: linear-gradient(to right, $purple, $light-purple 50%, $grid-color 50% 100%)
   background-size: 200%
   background-position: right
-  margin-right: 0
+
   transition: background .2s ease-in
 
-  &:hover
-    background-position: left
-    transition: background .3s ease-in-out
+.start-btn
+  margin-right: 0
 
 .highlight
   background-position: left
@@ -234,7 +235,7 @@ export default {
   max-width: 40%
   flex-grow: 4
   flex-basis: 0
-  height: calc(100vh - 2 * #{$gap})
+  // height: calc(100vh - 2 * #{$gap})
   display: flex
   flex-direction: column
 

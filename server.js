@@ -10,10 +10,10 @@ const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 
-const PATH = path.join(__dirname, '/master');
+const PATH = path.join(__dirname, '/dist');
 console.warn(PATH);
 
-fs.copySync('dist', 'master', { overwrite: true, filter: (filePath) => !filePath.includes('.json') && !filePath.includes('code') });
+// fs.copySync('dist', 'public', { overwrite: true, filter: (filePath) => !filePath.includes('.json') && !filePath.includes('code') });
 
 let list = {};
 let stringifiedList = '';

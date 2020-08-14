@@ -308,7 +308,8 @@ export default {
         console.log('USING CUSTOM CODE');
         return this.customCode.text;
       }
-      const url = `code/${this.language.name.replace('#', '_sharp')}/${this.codeInfo.name}.${this.language.ext}`;
+      console.warn(process.env.VUE_APP_URL);
+      const url = `${process.env.VUE_APP_URL}/code/${this.language.name.replace('#', '_sharp')}/${this.codeInfo.name}.${this.language.ext}`;
       console.warn(url);
       try {
         const resp = await axios.get(url);

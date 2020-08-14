@@ -2,7 +2,7 @@
   <div id="app" ref="app">
     <template v-if="!tooSmall">
       <aside ref="navLeft" class="nav-left" :class="{thin: isPlaying, wide: room.connected }">
-        <NavColumn :class="[{thin: isPlaying }]" />
+        <NavBar :class="[{thin: isPlaying }]" />
       </aside>
       <main>
         <keep-alive :exclude="['Run', 'Results']">
@@ -15,13 +15,13 @@
 </template>
 
 <script>
-import NavColumn from '@/components/NavColumn.vue';
+import NavBar from '@/components//NavBar.vue';
 import SmallScreen from '@/views/SmallScreen.vue';
 import { mapGetters } from 'vuex';
 
 export default {
   components: {
-    NavColumn,
+    NavBar,
     SmallScreen,
   },
   computed: {

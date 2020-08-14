@@ -13,7 +13,7 @@ import store from './store';
 
 // Vue.mixin(trackMouse);
 
-const socket = io('https://encap.pl', {
+const socket = io(process.env.VUE_APP_URL, {
   autoConnect: false,
   reconnectionAttempts: 3,
   timeout: 10000,
