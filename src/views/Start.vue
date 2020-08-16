@@ -211,8 +211,6 @@ export default {
   background: $grid-color
   margin-right: $gap
   cursor: pointer
-
-.button
   flex-grow: 1
   max-width: 250px
 

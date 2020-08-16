@@ -4,7 +4,7 @@
     <h2>{{ stats.codeLength }} correct in {{ format(stats.timeFromFirstInput, 1) }} sec</h2>
     <h3>Starting speed: {{ format(oneThirdWPM, 0, 1) }} WPM</h3>
     <h3>Final speed: {{ format(lastThirdWPM, 0, 1) }} WPM</h3>
-    <h4>Start reaction time (excluded from results): {{ format(longestTimeOfCorrection, 0, 1) }} ms</h4>
+    <h4>Start reaction time (excluded from results): {{ format(startReactionTime, 0, 1) }} ms</h4>
     <h4>Input intervals: {{ format(keyPressAvgInterval, 0, 1) }} ms</h4>
     <div v-if="mistakes.length" class="mistakes">
       <h2>Total errors: {{ mistakes.length }} / {{ stats.history.length - 1 }} ({{ format(mistakesToClicksRatio, 1, 100) }} %)</h2>

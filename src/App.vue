@@ -92,15 +92,18 @@ aside
   @include shadow()
   transition: transform $nav-trans-dur $nav-trans-timing 0s, min-width .5s ease-in-out
 
-aside.wide:not(.thin)
-  min-width: 22vw
+  &.wide:not(.thin)
+    min-width: 22vw
 
-aside.thin
-  transition-delay: $nav-trans-dur
-  transform: translateX(calc(-100% + #{$nav-move}))
+  &.thin
+    transition-delay: $nav-trans-dur
+    transform: translateX(calc(-100% + #{$nav-move}))
+    margin-right: calc( -1 * min(150px, calc(300px - 20vw)))
+
 
 main
   flex-grow: 1
+  position: relative
 
 button, a, input[type="checkbox"], input[type="radio"]
   cursor: pointer
@@ -140,6 +143,7 @@ option
   #app
     padding: 1em
 
-  aside
+  aside:not(.thin)
     margin-right: 1em
+
 </style>

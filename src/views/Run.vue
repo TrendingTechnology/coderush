@@ -1,37 +1,53 @@
 <template>
-  <div class="run">
-    <div v-if="requestReset" class="requestReset">
-      <h2>Room owner wants to start a new game</h2>
-      <p>You will be moved to lobby</p>
-      <button @click="$router.push('/')">
-        OK
-      </button>
-      <button @click="disconnect">
-        Leave room
-      </button>
-    </div>
-    <div class="info">
-      <h2>{{ languageName }}</h2>
-      <h4 v-if="codeInfo.name">
-        {{ codeInfo.name }}.{{ language.ext }}
-      </h4>
-      <h4>{{ codeSource }}</h4>
-    </div>
-    <!-- Changing key remounts component -->
-    <div class="main">
-      <div class="code">
-        <CodeEditor
-          v-if="language.name"
-          :key="componentKey"
-          @reset="reset"
-          @completed="completed"
-        />
+  <main
+    :key="resetKey"
+    @keydown.alt="resetSelf"
+  >
+    <div class="top-bar">
+      <div v-if="requestReset" class="requestReset">
+        <h2>Room owner wants to start a new game</h2>
+        <p>You will be moved to lobby</p>
+        <button @click="$router.push('/')">
+          OK
+        </button>
+        <button @click="disconnect">
+          Leave room
+        </button>
       </div>
-      <transition>
-        <Results v-if="$route.path === '/results' && stats" :stats="stats" />
-      </transition>
+      <div class="info">
+        <div class="languageName">
+          <h2>{{ languageName }}</h2>
+        </div>
+        <div class="codeInfo">
+          <p v-if="codeInfo.name">
+            {{ codeInfo.name }}.{{ language.ext }}
+          </p>
+          <p>{{ codeSource }}</p>
+        </div>
+      </div>
+      <div class="buttons">
+        <button class="reset" :disabled="room.connected" @click="reset">
+          Reset
+        </button>
+        <button class="finish" :disabled="room.connected" @click="finish">
+          Finish now
+        </button>
+      </div>
     </div>
-  </div>
+
+    <!-- Changing key remounts component -->
+    <CodeEditor
+      v-if="language.name"
+      ref="codeEditor"
+      :key="componentKey"
+      class="code-editor"
+      @reset="reset"
+      @completed="completed"
+    />
+    <transition>
+      <Results v-if="$route.path === '/results' && stats" :stats="stats" />
+    </transition>
+  </main>
 </template>
 
 <script>
@@ -48,8 +64,10 @@ export default {
   data() {
     return {
       componentKey: 1,
+      resetKey: 1,
       stats: false,
       requestReset: false,
+
     };
   },
   computed: {
@@ -65,6 +83,7 @@ export default {
     languageName() {
       return this.language.name.replace('_', ' ');
     },
+
   },
   created() {
     if (!this.language.name) {
@@ -83,6 +102,15 @@ export default {
         this.$router.push('/run');
       }
     },
+    resetSelf() {
+      this.resetKey += 1;
+      if (this.$route.path === '/results') {
+        this.$router.push('/run');
+      }
+    },
+    finish() {
+      this.$refs.codeEditor.completed();
+    },
     completed(stats) {
       this.stats = stats;
     },
@@ -98,18 +126,59 @@ export default {
 </script>
 
 <style lang="sass" scoped>
-.main
+main
+  height: 400px
+  max-width: 1300px
+  width: 100%
+  position: relative
+  flex-direction: column
   display: flex
-  flex-wrap: wrap
+  justify-content: flex-start
+
+  .codeEditor
+    flex-grow: 1
+
+.top-bar
+  display: flex
   justify-content: space-between
-  min-height: 100%
+  align-items: center
+  position: relative
+  animation: opacity-enter .5s ease-out forwards .7s
+  animation-fill-mode: both
+  margin-bottom: 1rem
+
+  .info
+    position: relative
+    display: flex
+    align-items: center
+    min-width: 0
+
+    .languageName
+      font-size: 2rem
+      margin-right: 1em
+    .codeInfo
+      display: flex
+      justify-content: space-between
+      flex-direction: column
+      overflow: hidden
+      p
+        margin-bottom: $grid-gap
+
+  .buttons
+    flex-shrink: 0
+    button
+      text-align: center
+      width: 150px
+      height: 47px
+      background: $grid-color
+      margin-left: max(10px, calc(20vw - 210px))
+      cursor: pointer
+
+@keyframes opacity-enter
+  from
+    opacity: 0
+  to
+    opacity: 1
 
 
-.code
-  flex-grow: 1
-
-
-@media (max-width: 900)
-  .main
-    display: block
 </style>

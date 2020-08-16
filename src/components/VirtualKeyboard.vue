@@ -380,7 +380,7 @@ span
   font-size: 0.75rem
 
 [wrong-count]
-  background: var(--accent1)
+  background: $accent1
   filter: unquote("saturate(calc(var(--wrong-count) * 20% + 60%))")
 
 [expected-count]

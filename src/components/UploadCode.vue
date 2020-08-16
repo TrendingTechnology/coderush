@@ -120,7 +120,6 @@ export default {
     fixHeight() {
       if (this.timeout) window.clearTimeout(this.timeout);
       this.timeout = window.setTimeout(() => {
-        this.rafActive = false;
         const scroll = this.$refs.codemirror.$el.getElementsByClassName('CodeMirror-scroll')[0];
         console.log(this.$refs.codemirror.$el.offsetHeight);
         scroll.style.maxHeight = `${this.$refs.codemirror.$el.offsetHeight}px`;
