@@ -335,6 +335,7 @@ export default {
     },
     async onCmCodeChange(_, [change]) {
       if (this.toFix > 0 && this.currentTextMark.length === 3) {
+        // save textMark - .length checks if textMark array correct
         // console.warn(`NEW MARKER: line: ${this.currentTextMark[0].line}, from: ${this.currentTextMark[0].ch}, to: ${this.currentTextMark[1].ch}`);
         this.markers.unshift(this.editorCm.markText(...this.currentTextMark));
         this.currentTextMark = [];
