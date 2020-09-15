@@ -1,0 +1,63 @@
+name: Vue build and update stats
+
+on:
+  push:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  build-and-update:
+    name: Build and update stats
+    runs-on: ubuntu-latest
+    env:
+      build: ${{ !contains(github.event.head_commit.message, 'Scheduled stats update') }}
+    steps:
+    # - uses: actions/checkout@master
+    - name: clone
+      run: "git clone https://${{ secrets.GH_PERSONAL_TOKEN }}@github.com/encap/coderush.git ."
+      # with:
+        # token: ${{ secrets.GH_PERSONAL_TOKEN }}
+    - name: Use Node.js
+      if: env.build
+      uses: actions/setup-node@v1
+      with:
+        node-version: '12'
+    - name: Run npm install
+      if: env.build
+      run: npm install
+    - name: Run npm build script
+      if: env.build
+      run: npm run build
+    # - name: Test
+    #   run: git fetch
+    - name: ccommit
+      run: git commit -m 'build'
+    - name: checkout deploy
+      run: git checkout deploy
+    - name: Refs
+      run: git show-ref
+    - name: checkout master files
+      run: git checkout master -- "server/" "dist/"
+    - name: Commit build
+      if: env.build
+      uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        # repository: .
+        # file_pattern: server/ dist/*
+        commit_options: '--allow-empty'
+        skip_dirty_check: true
+        commit_message: Vue build
+        commit_user_name: Public updater
+        commit_user_email: bot@github.com
+        commit_author: Bot <bot@github.com>
+    - name: Commit new stats
+      if: ${{ !env.build }}
+      uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        branch: deploy
+        repository: .
+        file_pattern: server/ dist/*
+        commit_message: Scheduled stats update
+        commit_user_name: Public updater
+        commit_user_email: bot@github.com
+        commit_author: Bot <bot@github.com>
