@@ -27,6 +27,10 @@ jobs:
         gsutil -m rsync -r -d dist gs://$GCS_BUCKET
       env:
         GCS_BUCKET: ${{ secrets.GCS_BUCKET }}
+    - name: Set headers
+      if: env.build
+      run: |
+        for file in dist/*/*.gz; do gsutil setmeta -h "Content-Encoding:gzip" gs://$GCS_BUCKET/$file; done
     - name: Upload only list.json
       if: ${{ !env.build }}
       run: |-
