@@ -24,7 +24,7 @@ jobs:
         export_default_credentials: true
     - name: Upload
       if: env.build
-      run: |-
+      run: |
         gsutil -m rsync -r -d dist gs://$GCS_BUCKET
      
     - name: Set headers
@@ -33,7 +33,7 @@ jobs:
         for file in dist/*/*.gz; do gsutil setmeta -h "Content-Encoding:gzip" gs://$GCS_BUCKET/${file:5}; done
     - name: Upload only list.json
       if: ${{ !env.build }}
-      run: |-
+      run: |
         gsutil dist/list.json gs://$GCS_BUCKET/dist/list.json
       env:
         GCS_BUCKET: ${{ secrets.GCS_BUCKET }}
