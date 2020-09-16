@@ -1,0 +1,24 @@
+{
+  "name": "coderush-server",
+  "version": "0.4.0",
+  "private": true,
+  "scripts": {
+    "server": "DEBUG=socket.io:client* node ./server/server.js",
+    "start": "node ./server/server.js"
+  },
+  "dependencies": {
+    "axios": "^0.19.2",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "debug": "^4.1.1",
+    "express": "^4.17.1",
+    "express-history-api-fallback": "^2.2.1",
+    "prune": "0.0.2",
+    "socket.io": "^2.3.0",
+    "socket.io-client": "^2.3.0"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": "12.16.x"
+  }
+}
