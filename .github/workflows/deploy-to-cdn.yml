@@ -24,7 +24,7 @@ jobs:
     - name: Upload
       if: env.build
       run: |-
-        gsutil -m rsync -r -d dist gs://$GCS_BUCKET
+        gsutil -h "Content-Encoding:gzip" -m rsync -r -d dist gs://$GCS_BUCKET
       env:
         GCS_BUCKET: ${{ secrets.GCS_BUCKET }}
     - name: Upload only list.json
