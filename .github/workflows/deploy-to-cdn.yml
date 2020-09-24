@@ -25,7 +25,7 @@ jobs:
     - name: Upload
       if: env.build
       run: |
-        gsutil -m rsync -r -d dist gs://$GCS_BUCKET
+        gsutil -h "Cache-Control:no-cache" -m rsync -r -d dist gs://$GCS_BUCKET
      
     - name: Set headers
       if: env.build
