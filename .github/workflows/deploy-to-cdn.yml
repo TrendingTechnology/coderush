@@ -33,7 +33,7 @@ jobs:
     - name: Set headers
       if: env.build
       run: |
-        for file in dist/*/*.gz; do gsutil setmeta -h "Content-Encoding:gzip" gs://$GCS_BUCKET/${file:5}; done
+        for file in **/*.gz; do gsutil setmeta -h "Content-Encoding:gzip" gs://$GCS_BUCKET/${file:5}; done
     - name: Upload only database.json
       if: ${{ !env.build }}
       run: |
