@@ -22,19 +22,22 @@ jobs:
         service_account_key: ${{ secrets.GCS_SA_KEY }}
         project_id: ${{ secrets.GCS_PROJECT_ID }}
         export_default_credentials: true
+    - name: Copy database
+      if: env.build
+      run: |
+        cp server/database.json dist/
     - name: Upload
       if: env.build
       run: |
-        gsutil -h "Cache-Control:no-cache" -m rsync -r -d dist gs://$GCS_BUCKET
-     
+        gsutil -h "Cache-Control:no-cache" -m rsync -r -d dist gs://$GCS_BUCKET 
     - name: Set headers
       if: env.build
       run: |
         for file in dist/*/*.gz; do gsutil setmeta -h "Content-Encoding:gzip" gs://$GCS_BUCKET/${file:5}; done
-    - name: Upload only list.json
+    - name: Upload only database.json
       if: ${{ !env.build }}
       run: |
-        gsutil dist/list.json gs://$GCS_BUCKET/dist/list.json
+        gsutil server/database.json gs://$GCS_BUCKET/database.json
       env:
         GCS_BUCKET: ${{ secrets.GCS_BUCKET }}
         
