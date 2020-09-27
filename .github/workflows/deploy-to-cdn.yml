@@ -33,7 +33,7 @@ jobs:
     - name: Set headers
       if: env.build
       run: |
-        gsutil -m setmeta -h "Content-Encoding:gzip" gs:/$GCS_BUCKET/**.gz
+        gsutil -m setmeta -h "Content-Encoding:gzip" gs://${GCS_BUCKET}/**.gz
     - name: Upload only database
       if: ${{ !env.build }}
       run: |
