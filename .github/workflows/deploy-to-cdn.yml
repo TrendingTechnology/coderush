@@ -29,15 +29,14 @@ jobs:
     - name: Upload
       if: env.build
       run: |
-        gsutil -h "Cache-Control:no-cache" -m rsync -r -d dist gs://$GCS_BUCKET 
+        gsutil -m -h "Cache-Control:no-cache" rsync -r -d dist gs://$GCS_BUCKET 
     - name: Set headers
       if: env.build
       run: |
-        for file in **/*.gz; do gsutil setmeta -h "Content-Encoding:gzip" gs://$GCS_BUCKET/${file:5}; done
-    - name: Upload only database.json
+        gsutil -m setmeta -h "Content-Encoding:gzip" gs:/$GCS_BUCKET/**.gz
       if: ${{ !env.build }}
       run: |
-        gsutil server/database.json gs://$GCS_BUCKET/database.json
+        gsutil -h "Cache-Control:no-cache" server/database.json gs://$GCS_BUCKET/database.json
       env:
         GCS_BUCKET: ${{ secrets.GCS_BUCKET }}
         
