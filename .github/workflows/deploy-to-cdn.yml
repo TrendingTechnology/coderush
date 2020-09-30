@@ -33,7 +33,9 @@ jobs:
     - name: Set headers
       if: env.build
       run: |
-        gsutil -m setmeta -h "Content-Encoding:gzip" gs://${GCS_BUCKET}/**.gz
+        gsutil -m setmeta -h "Content-Encoding:gzip" gs://${GCS_BUCKET}/*/*
+        gsutil -m setmeta -h "Content-Encoding:gzip" gs://${GCS_BUCKET}/cm/*/*
+
     # - name: Set headers on cmLoader
     #   if: env.build
     #   run: |
