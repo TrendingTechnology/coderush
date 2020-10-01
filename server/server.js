@@ -37,6 +37,16 @@ if (process.env.NODE_ENV === 'production') {
   toggleMaintanceMode(false);
 }
 
+const keepAwake = () => {
+  if (process.env.NODE_ENV === 'production') {
+    axios.get('https://coderush.herokuapp.com/api/ping')
+      .then((res) => console.log(`ping ok, status: ${res.status}`))
+      .catch((err1) => console.error(`Ping Error: ${err1}`));
+  }
+}
+
+setInterval(keepAwake, 1000 * 60 * 20);
+
 let cachedIndexHtml = '';
 const getIndexHtml = () => {
   if (process.env.NODE_ENV === 'production') {
@@ -50,20 +60,25 @@ const getIndexHtml = () => {
         }
       })
       .catch((err) => {
-        console.warn('Error index.html');
+        console.warn('Error cannot get index.html from cdn');
         console.error(err);
       });
   }
 };
 
-setTimeout(getIndexHtml, 1200); // wait for cdn to update
+setTimeout(getIndexHtml, 1000 * 60 * 2); // wait for cdn to update
+
+setInterval(() => {
+  console.log('Update html cache');
+  getIndexHtml()
+}, 1000 * 60 * 60 * 24);
 
 let database = {};
 let cachedStringifiedDatabase = '';
 
 const getDatabase = () => {
-  console.log('getDatabase');
   if (process.env.NODE_ENV === 'production') {
+    console.log('getDatabase');
     axios.get('https://coderushcdn.ddns.net/database.json')
       .then((res) => {
         if (res.status === 200) {
@@ -72,21 +87,18 @@ const getDatabase = () => {
         }
       })
       .catch((err) => {
-        console.warn('Error database.json not found');
+        console.warn('Error: cannot get database from cdn');
         console.error(err);
       });
 
     setInterval(() => {
-      console.log('TIMER');
+      console.log('Update database cache');
       cachedStringifiedDatabase = JSON.stringify(database);
-      axios.get('https://coderush.herokuapp.com/api/ping')
-        .then((res) => console.log(`ping ok, status: ${res.status}`))
-        .catch((err1) => console.error(`Ping Error: ${err1}`));
     }, 1000 * 60 * 20);
   }
 };
 
-getDatabase();
+setTimeout(getDatabase, 1000 * 60 * 2); // wait for cdn to update
 
 let newStats = false;
 const sendStats = () => {
@@ -187,14 +199,6 @@ app.post('/api/stats', (req, res) => {
 
 app.get('/api/ping', (req, res) => {
   res.send('OK');
-});
-
-app.use((req, res, next) => {
-  if (!(process.env.NODE_ENV === 'production') && (req.originalUrl.slice(-3) === '.js' || req.originalUrl.slice(-4) === '.css')) {
-    res.header('content-encoding', 'gzip');
-    res.header('content-type', req.originalUrl.includes('js') ? 'application/javascript' : 'text/css');
-  }
-  next();
 });
 
 app.use(express.static(PATH));
