@@ -11,8 +11,8 @@ jobs:
     name: Upload Assets
     runs-on: ubuntu-latest
     env:
-      build: ${{ !contains(github.event.head_commit.message, 'Scheduled stats update') }}
-      GCS_BUCKET: ${{ secrets.GCS_BUCKET }}
+      stats: ${{ contains(github.event.head_commit.message, 'Scheduled stats update') }}
+      code: ${{ contains(github.event.head_commit.message, 'Code submission') }}
     steps:
     - name: Checkout
       uses: actions/checkout@master
@@ -23,22 +23,28 @@ jobs:
         project_id: ${{ secrets.GCS_PROJECT_ID }}
         export_default_credentials: true
     - name: Copy database
-      if: env.build
+      if: ${{ !env.stats && !env.code }}
       run: |
         cp server/database.json dist/
-    - name: Upload
-      if: env.build
+    - name: Upload dist directory
+      if: ${{ !env.stats && !env.code }}
       run: |
         gsutil -m -h "Cache-Control:no-store" rsync -r -d dist gs://$GCS_BUCKET 
     - name: Set headers
-      if: env.build
+      if: ${{ !env.stats && !env.code }}
       run: |
         gsutil -m setmeta -h "Content-Encoding:gzip" gs://${GCS_BUCKET}/*/*
         gsutil -m setmeta -h "Content-Encoding:gzip" gs://${GCS_BUCKET}/cm/**/*
     - name: Upload only database
-      if: ${{ !env.build }}
+      if: ${{ env.stats || env.code }}
       run: |
         gsutil -h "Cache-Control:no-cache" server/database.json gs://$GCS_BUCKET/database.json
+      env:
+        GCS_BUCKET: ${{ secrets.GCS_BUCKET }}
+    - name: Upload only new code examples
+      if: env.code
+      run: |
+        gsutil -m -h "Cache-Control:no-store" rsync -r -d dist/code gs://$GCS_BUCKET/code
       env:
         GCS_BUCKET: ${{ secrets.GCS_BUCKET }}
         
