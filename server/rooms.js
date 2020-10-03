@@ -16,7 +16,7 @@ module.exports = function (http) {
         } else {
           socket.emit('player_name_avaible');
           socket.on('joinRoom', () => {
-            console.warn(`join ROOM ${roomName}, player: ${playerName}`);
+            console.log(`player "${playerName}" joined "${roomName}"`);
             socket.join(roomName);
             rooms[roomName].players[socket.id] = { connected: true };
             rooms[roomName].players[socket.id].name = playerName;
@@ -44,8 +44,12 @@ module.exports = function (http) {
     }
 
     socket.on('optionChange', (option) => {
-      rooms[roomName].options[option.name] = option.data;
+      rooms[roomName].options[option.name] = option.value;
       socket.to(roomName).emit('option_change', option);
+    });
+
+    socket.on('optionsData', (options) => {
+      rooms[roomName].options = options;
     });
 
     socket.on('languageChange', (languageIndex) => {
@@ -66,11 +70,11 @@ module.exports = function (http) {
     });
 
     socket.on('customCodeData', (data) => {
+      rooms[roomName].customCode = data;
       socket.to(roomName).emit('custom_code_data', data);
     });
 
     socket.on('useCustomCode', (data) => {
-      console.log('sadddddddadgadf\nasdasdda');
       socket.to(roomName).emit('use_custom_code', data);
     });
 
@@ -79,7 +83,7 @@ module.exports = function (http) {
     });
 
     socket.on('completed', (time) => {
-      console.log(`completed ${Date.now() - time} ms latency`);
+      console.log(`player "${rooms[roomName].players[socket.id].name} completed; ${Date.now() - time} ms latency`);
 
       const data = {
         playerName: rooms[roomName].players[socket.id].name,
@@ -98,15 +102,15 @@ module.exports = function (http) {
 
     socket.on('reset', () => {
       if (rooms[roomName].players[socket.id].owner) {
-        console.dir(rooms[roomName]);
+        console.warn(`room "${roomName}" reset`);
         io.in(roomName).emit('reset');
       }
     });
 
     socket.on('disconnecting', () => {
-      console.log('disconnect');
       try {
         const player = rooms[roomName].players[socket.id];
+        console.log(`player "${player.name}" disconnected from "${roomName}"`);
 
         socket.to(roomName).emit('player_disconnected', {
           playerName: player.name,
@@ -119,7 +123,7 @@ module.exports = function (http) {
           delete rooms[roomName].players[socket.id];
         }
       } catch (err) {
-        console.error(err);
+        console.error('IO DISCONNECT ERROR');
       }
     });
   });
