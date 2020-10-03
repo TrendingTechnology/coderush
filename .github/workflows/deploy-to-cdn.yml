@@ -38,7 +38,7 @@ jobs:
     - name: Upload only database
       if: ${{ env.stats || env.code }}
       run: |
-        gsutil -h "Cache-Control:no-cache" server/database.json gs://$GCS_BUCKET/database.json
+        gsutil -h "Cache-Control:no-cache" cp server/database.json gs://$GCS_BUCKET/
       env:
         GCS_BUCKET: ${{ secrets.GCS_BUCKET }}
     - name: Upload only new code examples
