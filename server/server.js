@@ -63,8 +63,7 @@ const getIndexHtml = () => {
       });
   }
 };
-
-setTimeout(getIndexHtml, 1000 * 60 * 2); // wait for cdn to update
+getIndexHtml();
 
 setInterval(() => {
   console.log('index.html cache update');
@@ -99,7 +98,7 @@ const getDatabase = () => {
   }
 };
 
-setTimeout(getDatabase, 1000 * 60); // wait for cdn to update
+getDatabase();
 
 let newStats = false;
 const sendStats = () => {
@@ -128,7 +127,7 @@ const sendStats = () => {
       });
   }
 };
-setInterval(sendStats, 1000 * 60 * 2); // DEV * 5
+setInterval(sendStats, 1000 * 60 * 2); // DEV * 60 * 12
 
 app.enable('trust proxy'); // trust heroku and cloudflare
 
@@ -212,8 +211,8 @@ app.post('/upload', (req, res) => {
 app.post('/api/stats', (req, res) => {
   if (process.env.NODE_ENV === 'production') {
     const stats = req.body;
-    database.stats.avgWPM = (database.stats.avgWPM * database.stats.total + stats.wpm) / (database.stats.total + 1);
-  
+    database.stats.avgWPM = Math.round((database.stats.avgWPM * database.stats.total + stats.wpm) / (database.stats.total + 1) * 1000) / 1000;
+
     database.stats.total += 1;
 
     database.stats.correctClicks = database.stats.correctClicks + stats.correctClicks || database.stats.correctClicks;
