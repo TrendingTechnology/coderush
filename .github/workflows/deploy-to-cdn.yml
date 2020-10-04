@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       stats: ${{ contains(github.event.head_commit.message, 'Scheduled stats update') }}
-      code: ${{ contains(github.event.head_commit.message, 'Code submission') }}
+      code: ${{ contains(github.event.head_commit.message, 'Code database update - new submission') }}
       GCS_BUCKET: ${{ secrets.GCS_BUCKET }}
     steps:
     - name: Checkout
