@@ -123,6 +123,15 @@ setInterval(sendStats, 1000 * 60 * 60 * 12);
 
 app.enable('trust proxy'); // trust heroku and cloudflare
 
+// redirect to coderush.xyz
+app.use((req, res, next) => {
+  if (!req.subdomains.length) {
+    res.redirect(301, `https://coderush.xyz${req.path}`);
+  } else {
+    next();
+  }
+});
+
 // redirect to https
 app.use((req, res, next) => {
   if (req.protocol === 'http' && PROD) {
@@ -143,7 +152,7 @@ app.get('/api/ping', (req, res) => {
 });
 
 const keepAwake = () => {
-  axios.get('https://coderush.herokuapp.com/api/ping')
+  axios.get('https://coderush.xyz/api/ping')
     .catch((err) => console.error(`Ping Error: ${err}`));
 };
 
